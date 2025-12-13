@@ -1,0 +1,15 @@
+# Variables de entorno (nunca subas esto)
+private/.env
+
+# Base de datos (opcional, pero recomendado)
+private/db/*.sqlite
+
+# Archivos subidos por las maestras (solo lectura)
+private/upload/
+
+# Node modules (si algún día usas dependencias globales)
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
