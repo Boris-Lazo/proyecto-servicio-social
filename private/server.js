@@ -8,6 +8,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const auth = require('./middleware/auth');
+const errorHandler = require('./middleware/errorHandler');
 
 // Inicializar la aplicación de forma asíncrona
 (async () => {
@@ -27,7 +28,7 @@ const auth = require('./middleware/auth');
     const db = new sqlite.Database(path.join(__dirname, 'db', 'escuela.sqlite'));
 
     // ---------- LOGIN ----------
-    app.post('/api/login', (req, res) => {
+    app.post('/api/login', (req, res, next) => {
       const { user, password } = req.body;
       console.log('[LOGIN] Intento de login para:', user);
 
@@ -39,7 +40,7 @@ const auth = require('./middleware/auth');
       db.get('SELECT * FROM users WHERE user = ?', [user], (err, row) => {
         if (err) {
           console.error('[LOGIN] Error de BD:', err);
-          return res.status(500).json({ error: 'Error de base de datos' });
+          return next({ status: 500, message: 'Error de base de datos' });
         }
 
         if (!row) {
@@ -51,7 +52,7 @@ const auth = require('./middleware/auth');
         bcrypt.compare(password, row.hash, (err, ok) => {
           if (err) {
             console.error('[LOGIN] Error al comparar contraseñas:', err);
-            return res.status(500).json({ error: 'Error al verificar contraseña' });
+            return next({ status: 500, message: 'Error al verificar contraseña' });
           }
 
           if (!ok) {
@@ -67,19 +68,19 @@ const auth = require('./middleware/auth');
     });
 
     // ---------- CAMBIAR CONTRASEÑA ----------
-    app.post('/api/change-password', auth, (req, res) => {
+    app.post('/api/change-password', auth, (req, res, next) => {
       const { oldPass, newPass } = req.body;
       if (!oldPass || !newPass) return res.status(400).json({ error: 'Faltan campos' });
       db.get('SELECT hash FROM users WHERE user = ?', [req.user], (err, row) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+        if (err) return next({ status: 500, message: 'Error en la base de datos' });
         if (!row) return res.status(404).json({ error: 'Usuario no encontrado' });
         bcrypt.compare(oldPass, row.hash, (err, ok) => {
           if (err || !ok) return res.status(401).json({ error: 'Contraseña actual incorrecta' });
           // Usar versión asíncrona de hash
           bcrypt.hash(newPass, 10, (err, newHash) => {
-            if (err) return res.status(500).json({ error: 'Error al procesar contraseña' });
+            if (err) return next({ status: 500, message: 'Error al procesar la contraseña' });
             db.run('UPDATE users SET hash = ? WHERE user = ?', [newHash, req.user], function (err) {
-              if (err) return res.status(500).json({ error: 'No se pudo actualizar' });
+              if (err) return next({ status: 500, message: 'No se pudo actualizar la contraseña' });
               res.json({ ok: true, msg: 'Contraseña cambiada' });
             });
           });
@@ -122,33 +123,33 @@ const auth = require('./middleware/auth');
       const slug = titulo.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       req.folderName = `${fecha}-${slug}`;
       next();
-    }, upload.array('fotos', 30), (req, res) => {
+    }, upload.array('fotos', 30), (req, res, next) => {
       const fotos = req.files.map(f => f.filename);
       const album = { id: req.folderName, titulo: req.body.titulo, fecha: req.body.fecha, descripcion: req.body.descripcion || '', fotos };
       db.run('INSERT INTO albums (id, titulo, fecha, descripcion, fotos) VALUES (?, ?, ?, ?, ?)',
         [album.id, album.titulo, album.fecha, album.descripcion, JSON.stringify(album.fotos)],
         function (err) {
-          if (err) return res.status(500).json({ error: 'No se pudo insertar' });
+          if (err) return next({ status: 500, message: 'No se pudo insertar el álbum' });
           res.status(201).json({ ok: true, album });
         });
     });
 
     // ---------- LISTAR ÁLBUMES ----------
-    app.get('/api/albums', (_req, res) => {
+    app.get('/api/albums', (_req, res, next) => {
       db.all('SELECT * FROM albums ORDER BY fecha DESC', [], (err, rows) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+        if (err) return next({ status: 500, message: 'Error en la base de datos' });
         rows.forEach(r => r.fotos = JSON.parse(r.fotos));
         res.json(rows);
       });
     });
 
     // ---------- ELIMINAR ÁLBUM ----------
-    app.delete('/api/albums/:id', auth, (req, res) => {
+    app.delete('/api/albums/:id', auth, (req, res, next) => {
       const { id } = req.params;
 
       // Buscar álbum en BD
       db.get('SELECT * FROM albums WHERE id = ?', [id], (err, album) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+        if (err) return next({ status: 500, message: 'Error en la base de datos' });
         if (!album) return res.status(404).json({ error: 'Álbum no encontrado' });
 
         // Eliminar carpeta de fotos
@@ -159,7 +160,7 @@ const auth = require('./middleware/auth');
 
         // Eliminar de BD
         db.run('DELETE FROM albums WHERE id = ?', [id], function (err) {
-          if (err) return res.status(500).json({ error: 'Error al eliminar de BD' });
+          if (err) return next({ status: 500, message: 'Error al eliminar el álbum de la base de datos' });
           res.json({ ok: true, message: 'Álbum eliminado' });
         });
       });
@@ -192,33 +193,33 @@ const auth = require('./middleware/auth');
       fileFilter: pdfFilter
     });
 
-    app.post('/api/docs', auth, uploadDoc.single('doc'), (req, res) => {
+    app.post('/api/docs', auth, uploadDoc.single('doc'), (req, res, next) => {
       if (!req.file) return res.status(400).json({ error: 'No se envió archivo' });
       const { titulo, mes } = req.body;
       if (!titulo || !mes) return res.status(400).json({ error: 'Faltan título o mes' });
       db.run('INSERT INTO docs (titulo, mes, filename) VALUES (?, ?, ?)',
         [titulo, mes, req.file.filename],
         function (err) {
-          if (err) return res.status(500).json({ error: 'No se pudo insertar' });
+          if (err) return next({ status: 500, message: 'No se pudo insertar el documento' });
           res.json({ ok: true, filename: req.file.filename });
         });
     });
 
     // ---------- LISTAR Y DESCARGAR DOCUMENTOS ----------
-    app.get('/api/docs', (_req, res) => {
+    app.get('/api/docs', (_req, res, next) => {
       db.all('SELECT * FROM docs ORDER BY mes DESC', [], (err, rows) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+        if (err) return next({ status: 500, message: 'Error en la base de datos' });
         res.json(rows);
       });
     });
 
     // ---------- ELIMINAR DOCUMENTO ----------
-    app.delete('/api/docs/:id', auth, (req, res) => {
+    app.delete('/api/docs/:id', auth, (req, res, next) => {
       const { id } = req.params;
 
       // Buscar documento en BD
       db.get('SELECT * FROM docs WHERE id = ?', [id], (err, doc) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+        if (err) return next({ status: 500, message: 'Error en la base de datos' });
         if (!doc) return res.status(404).json({ error: 'Documento no encontrado' });
 
         // Eliminar archivo PDF
@@ -229,7 +230,7 @@ const auth = require('./middleware/auth');
 
         // Eliminar de BD
         db.run('DELETE FROM docs WHERE id = ?', [id], function (err) {
-          if (err) return res.status(500).json({ error: 'Error al eliminar de BD' });
+          if (err) return next({ status: 500, message: 'Error al eliminar el documento de la base de datos' });
           res.json({ ok: true, message: 'Documento eliminado' });
         });
       });
@@ -253,6 +254,8 @@ const auth = require('./middleware/auth');
       }
       next();
     });
+
+    app.use(errorHandler);
 
     // ---------- ARRANCAR ----------
     const PORT = process.env.PORT || 4000;

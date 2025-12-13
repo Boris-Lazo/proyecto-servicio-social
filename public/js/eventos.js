@@ -66,15 +66,18 @@ function createAlbumCard(album) {
         day: 'numeric'
     });
 
+    const safeTitle = sanitizeHTML(album.titulo);
+    const safeDescription = sanitizeHTML(album.descripcion);
+
     card.innerHTML = `
         <div class="album-cover">
-            <img src="${coverUrl}" alt="Portada de ${album.titulo}" loading="lazy">
+            <img src="${coverUrl}" alt="Portada de ${safeTitle}" loading="lazy">
             <div class="album-photo-count">📸 ${album.fotos.length}</div>
         </div>
         <div class="album-info">
-            <h3>${album.titulo}</h3>
+            <h3>${safeTitle}</h3>
             <div class="album-date">${formattedDate}</div>
-            ${album.descripcion ? `<p class="album-description">${album.descripcion}</p>` : ''}
+            ${safeDescription ? `<p class="album-description">${safeDescription}</p>` : ''}
         </div>
         <div class="album-thumbnails" data-album-id="${album.id}"></div>
     `;
@@ -137,8 +140,10 @@ function updateLightboxContent() {
         day: 'numeric'
     });
 
+    const safeTitle = sanitizeHTML(currentAlbum.titulo);
+
     lightboxInfo.innerHTML = `
-        <h3>${currentAlbum.titulo}</h3>
+        <h3>${safeTitle}</h3>
         <p>${formattedDate}</p>
     `;
 

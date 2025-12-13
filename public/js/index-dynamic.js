@@ -39,16 +39,19 @@ function renderAlbumPreview(album, container) {
         day: 'numeric'
     });
 
+    const safeTitle = sanitizeHTML(album.titulo);
+    const safeDescription = sanitizeHTML(album.descripcion);
+
     container.innerHTML = `
         <div class="preview-card">
             <div class="preview-image">
-                <img src="${coverUrl}" alt="${album.titulo}" loading="lazy">
+                <img src="${coverUrl}" alt="${safeTitle}" loading="lazy">
                 <div class="preview-badge">📸 ${album.fotos.length} fotos</div>
             </div>
             <div class="preview-content">
-                <h3>${album.titulo}</h3>
+                <h3>${safeTitle}</h3>
                 <p class="preview-date">📅 ${formattedDate}</p>
-                ${album.descripcion ? `<p class="preview-desc">${album.descripcion}</p>` : ''}
+                ${safeDescription ? `<p class="preview-desc">${safeDescription}</p>` : ''}
             </div>
         </div>
         <a href="eventos.html" class="btn-cta">Ver todos los eventos →</a>
@@ -87,12 +90,13 @@ async function loadLatestDocument() {
 function renderDocumentPreview(doc, container) {
     const [year, month] = doc.mes.split('-');
     const monthName = getMonthName(parseInt(month));
+    const safeTitle = sanitizeHTML(doc.titulo);
 
     container.innerHTML = `
         <div class="preview-card doc-preview">
             <div class="doc-icon">📄</div>
             <div class="preview-content">
-                <h3>${doc.titulo}</h3>
+                <h3>${safeTitle}</h3>
                 <p class="preview-date">📅 ${monthName} ${year}</p>
                 <span class="doc-badge">PDF</span>
             </div>
