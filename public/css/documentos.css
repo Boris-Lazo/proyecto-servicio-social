@@ -1,0 +1,324 @@
+/* documentos.css - Estilos para la página de documentos */
+
+/* Sobrescribir estilos del header para esta página */
+.escuela-header {
+    min-height: auto !important;
+    background: transparent !important;
+}
+
+/* Ocultar imagen de fondo en esta página */
+.escuela-header .vista {
+    display: none;
+}
+
+/* Navegación sin transparencia y posición estática */
+.navBar {
+    position: static !important;
+    background-color: var(--color-fondo) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Asegurar que el main no tenga padding-top extra */
+body {
+    padding-top: 0 !important;
+}
+
+.documentos-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    min-height: calc(100vh - 200px);
+}
+
+/* Introducción */
+.documentos-intro {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #003b88 0%, #0056b3 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 59, 136, 0.2);
+}
+
+.documentos-intro h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.documentos-intro p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0.95;
+}
+
+/* Contenedor de documentos */
+.documentos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* Categoría de documentos */
+.documento-categoria h3 {
+    font-size: 1.5rem;
+    color: #003b88;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid #003b88;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Grid de documentos */
+.documentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Tarjeta de documento */
+.documento-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.documento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 59, 136, 0.15);
+    border-color: #003b88;
+}
+
+/* Icono del documento */
+.documento-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+/* Título del documento */
+.documento-card h4 {
+    font-size: 1.2rem;
+    color: #003b88;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+/* Descripción */
+.documento-desc {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+/* Metadatos */
+.documento-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.documento-fecha {
+    font-style: italic;
+}
+
+.documento-tipo {
+    background: #003b88;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* Botón de descarga */
+.documento-btn {
+    display: block;
+    text-align: center;
+    background-color: #003b88;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.documento-btn:hover {
+    background-color: #002a60;
+    transform: scale(1.02);
+}
+
+.documento-btn:active {
+    transform: scale(0.98);
+}
+
+/* Nota informativa */
+.documentos-nota {
+    background: #f8f9fa;
+    border-left: 4px solid #003b88;
+    padding: 1.5rem;
+    margin-top: 3rem;
+    border-radius: 6px;
+}
+
+.documentos-nota p {
+    margin: 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.documentos-nota strong {
+    color: #003b88;
+}
+
+/* Secciones de año y mes */
+.year-section {
+    margin-bottom: 3rem;
+}
+
+.year-header {
+    font-size: 2rem;
+    color: #003b88;
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid #003b88;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.month-section {
+    margin-bottom: 2rem;
+}
+
+.month-header {
+    font-size: 1.3rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #003b88;
+}
+
+/* Estados de carga */
+.loading-message,
+.empty-message,
+.error-message {
+    text-align: center;
+    padding: 4rem 2rem;
+    font-size: 1.2rem;
+    color: #666;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.loading-message::before {
+    content: "⏳";
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-message::before {
+    content: "📄";
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    color: #d32f2f;
+}
+
+.error-message::before {
+    content: "⚠️";
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .documentos-main {
+        padding: 1.5rem 1rem;
+    }
+
+    .documentos-intro {
+        padding: 1.5rem;
+    }
+
+    .documentos-intro h2 {
+        font-size: 1.5rem;
+    }
+
+    .documentos-intro p {
+        font-size: 1rem;
+    }
+
+    .documentos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .documento-categoria h3 {
+        font-size: 1.3rem;
+    }
+
+    .documento-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.documento-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.documento-categoria:nth-child(1) .documento-card {
+    animation-delay: 0.1s;
+}
+
+.documento-categoria:nth-child(2) .documento-card {
+    animation-delay: 0.2s;
+}
+
+.documento-categoria:nth-child(3) .documento-card {
+    animation-delay: 0.3s;
+}
+
+.documento-categoria:nth-child(4) .documento-card {
+    animation-delay: 0.4s;
+}

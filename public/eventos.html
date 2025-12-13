@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Centro educativo en El Amatal que ofrece educación básica para niños y adolescentes.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/eventos.css">
+    <link rel="icon" href="img/icoSV.ico" type="image/x-icon">
+    <title>CENTRO ESCOLAR "CANTÓN EL AMATAL" - Eventos</title>
+</head>
+
+<body>
+    <header class="escuela-header">
+        <nav class="navBar" id="header-top" aria-label="Principal">
+            <div class="escuela-titulo">
+                <h1>CENTRO ESCOLAR "CANTÓN EL AMATAL"</h1>
+            </div>
+
+            <button id="menu-toggle" class="menu-toggle" aria-controls="nav-menu" aria-expanded="false">
+                <span class="sr-only">Abrir menú</span>☰
+            </button>
+
+            <ul id="nav-menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="eventos.html" title="Fotografías de los eventos de la escuela">Eventos</a></li>
+                <li><a href="documentos.html" title="Documentos de rendición de cuentas">Documentos</a></li>
+                <li><a href="index.html#ubicacion" title="Ubicación">Ubicación</a></li>
+                <li><a href="login.html" title="Login">Login</a></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <main class="eventos-main">
+        <section class="eventos-intro">
+            <h2>Eventos de la Escuela</h2>
+            <p>Descubre los momentos más especiales de nuestra comunidad educativa a través de nuestras galerías
+                fotográficas.</p>
+        </section>
+
+        <!-- Contenedor dinámico de álbumes -->
+        <div id="albums-container">
+            <div class="loading-message">Cargando eventos...</div>
+        </div>
+    </main>
+
+    <!-- Lightbox para ver fotos en grande -->
+    <div id="lightbox" class="lightbox">
+        <button id="lightbox-close" class="lightbox-close" aria-label="Cerrar">×</button>
+
+        <div class="lightbox-content">
+            <button id="lightbox-prev" class="lightbox-nav lightbox-prev" aria-label="Anterior">‹</button>
+            <img id="lightbox-image" class="lightbox-image" src="" alt="">
+            <button id="lightbox-next" class="lightbox-nav lightbox-next" aria-label="Siguiente">›</button>
+        </div>
+
+        <div id="lightbox-info" class="lightbox-info"></div>
+        <div id="lightbox-counter" class="lightbox-counter"></div>
+    </div>
+
+    <footer>
+        <p>Todos los derechos reservados &copy;
+            <span id="year"></span>
+            Centro Escolar "Cantón El Amatal"
+        </p>
+    </footer>
+    <script src="js/navbar-mobile.js"></script>
+    <script src="js/year-dinamic.js"></script>
+    <script src="js/eventos.js"></script>
+</body>
+
+</html>

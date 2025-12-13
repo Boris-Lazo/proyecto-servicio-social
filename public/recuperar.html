@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Recuperación de contraseña – Centro Escolar Cantón El Amatal">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/recuperar.css">
+    <link rel="icon" href="img/icoSV.ico" type="image/x-icon">
+    <title>Recuperar Contraseña – Centro Escolar "CANTÓN EL AMATAL"</title>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navBar" id="header-top" aria-label="Principal">
+            <div class="escuela-titulo">
+                <h1>CENTRO ESCOLAR "CANTÓN EL AMATAL"</h1>
+            </div>
+            <button id="menu-toggle" class="menu-toggle" aria-controls="nav-menu" aria-expanded="false">
+                <span class="sr-only">Abrir menú</span>☰
+            </button>
+            <ul id="nav-menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="eventos.html" title="Fotografías de los eventos">Eventos</a></li>
+                <li><a href="documentos.html" title="Documentos de rendición">Documentos</a></li>
+                <li><a href="index.html#ubicacion" title="Ubicación">Ubicación</a></li>
+                <li><a href="login.html" title="Login">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="recover-main">
+        <section class="recover-box">
+            <h2>Recuperar Contraseña</h2>
+
+            <!-- Paso 1: Solicitar enlace de recuperación -->
+            <form id="recover-form" class="recover-form">
+                <label for="recover-user">Correo Electrónico</label>
+                <input type="email" id="recover-user" class="form-input" placeholder="usuario@ejemplo.com" required
+                    autocomplete="email" autofocus>
+
+                <button type="submit" class="btn">Solicitar enlace de recuperación</button>
+                <p id="recover-msg"></p>
+            </form>
+
+            <!-- Paso 2: Ingresar enlace y nueva contraseña -->
+            <details id="recover-token-details" class="recover-token-details">
+                <summary>Tengo el enlace de recuperación</summary>
+                <form id="recover-token-form" class="recover-form">
+                    <label for="recover-token">Pega aquí el enlace que te llegó al correo</label>
+                    <input type="text" id="recover-token" class="form-input" placeholder="eyJhbGc..." required>
+
+                    <label for="recover-new-pass">Nueva contraseña</label>
+                    <input type="password" id="recover-new-pass" class="form-input" required minlength="6">
+
+                    <button type="submit" class="btn">Establecer nueva contraseña</button>
+                    <p id="recover-token-msg"></p>
+                </form>
+            </details>
+
+            <!-- Link para volver al login -->
+            <div class="back-to-login">
+                <a href="login.html">← Volver al inicio de sesión</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Todos los derechos reservados &copy;
+            <span id="year"></span>
+            Centro Escolar "Cantón El Amatal"
+        </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/navbar-mobile.js"></script>
+    <script src="js/year-dynamic.js"></script>
+    <script src="js/recuperar.js"></script>
+</body>
+
+</html>
