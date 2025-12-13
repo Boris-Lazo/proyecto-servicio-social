@@ -1,61 +1,94 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+
 const sqlite = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
-const path = require('path');
-
 const dbFile = path.join(__dirname, 'escuela.sqlite');
 
 module.exports = new Promise((resolve, reject) => {
   const db = new sqlite.Database(dbFile, (err) => {
     if (err) {
       console.error('[DB] Error al abrir base de datos:', err);
-      reject(err);
-      return;
+      return reject(err);
     }
 
     db.serialize(() => {
-      // Tabla usuarios
+      // Create tables
       db.run(`CREATE TABLE IF NOT EXISTS users (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              user TEXT UNIQUE NOT NULL,
-              hash TEXT NOT NULL,
-              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )`);
-
-      // Tabla álbumes
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user TEXT UNIQUE NOT NULL,
+        hash TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
       db.run(`CREATE TABLE IF NOT EXISTS albums (
-              id TEXT PRIMARY KEY,
-              titulo TEXT NOT NULL,
-              fecha DATE NOT NULL,
-              descripcion TEXT,
-              fotos TEXT,
-              uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )`);
-
-      // Tabla documentos PDF
+        id TEXT PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        fecha DATE NOT NULL,
+        descripcion TEXT,
+        fotos TEXT,
+        uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
       db.run(`CREATE TABLE IF NOT EXISTS docs (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              titulo TEXT NOT NULL,
-              mes TEXT NOT NULL,
-              filename TEXT NOT NULL,
-              uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )`);
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL,
+        mes TEXT NOT NULL,
+        filename TEXT NOT NULL,
+        uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`);
 
-      // Usuarios por defecto
+      // Default users
       const defaults = [
-        { user: 'directora@amatal.edu.sv', pass: 'claveDirectora' },
-        { user: 'ericka.flores@clases.edu.sv', pass: 'claveSubdirectora' },
-        { user: 'borisstanleylazocastillo@gmail.com', pass: 'dev2024' }
-      ];
-      const stmt = db.prepare('INSERT OR IGNORE INTO users (user, hash) VALUES (?, ?)');
-      defaults.forEach(u => stmt.run(u.user, bcrypt.hashSync(u.pass, 10)));
-      stmt.finalize((err) => {
-        if (err) {
-          console.error('[DB] Error al finalizar:', err);
-          db.close();
-          reject(err);
-          return;
-        }
-        // Cerrar la base de datos solo después de que todas las operaciones terminen
+        { user: 'directora@amatal.edu.sv', pass: process.env.USER_DIRECTORA_PASS },
+        { user: 'ericka.flores@clases.edu.sv', pass: process.env.USER_SUBDIRECTORA_PASS },
+        { user: 'borisstanleylazocastillo@gmail.com', pass: process.env.USER_DEV_PASS }
+      ].filter(u => u.pass);
+
+      if (defaults.length > 0) {
+        const stmt = db.prepare('INSERT OR IGNORE INTO users (user, hash) VALUES (?, ?)');
+        const promises = defaults.map(u => {
+          return new Promise((resolve, reject) => {
+            bcrypt.hash(u.pass, 10, (err, hash) => {
+              if (err) return reject(err);
+              stmt.run(u.user, hash, (err) => {
+                if (err) return reject(err);
+                resolve();
+              });
+            });
+          });
+        });
+
+        Promise.all(promises)
+          .then(() => {
+            stmt.finalize(err => {
+              if (err) {
+                console.error('[DB] Error al finalizar statement:', err);
+                db.close();
+                return reject(err);
+              }
+              insertTestData();
+            });
+          })
+          .catch(err => {
+            console.error('[DB] Error al insertar usuarios por defecto:', err);
+            db.close();
+            reject(err);
+          });
+      } else {
+        insertTestData();
+      }
+    });
+
+    function insertTestData() {
+      const albumStmt = db.prepare('INSERT OR IGNORE INTO albums (id, titulo, fecha, descripcion, fotos) VALUES (?, ?, ?, ?, ?)');
+      albumStmt.run('test-album', 'Test Album', '2024-01-01', '<script>alert("xss")</script>', '[]');
+      albumStmt.finalize();
+
+      const docStmt = db.prepare('INSERT OR IGNORE INTO docs (titulo, mes, filename) VALUES (?, ?, ?)');
+      docStmt.run('Test Document', '2024-01', 'test.pdf');
+      docStmt.finalize(closeAndResolve);
+    }
+
+    function closeAndResolve() {
         db.close((err) => {
           if (err) {
             console.error('[DB] Error al cerrar:', err);
@@ -65,7 +98,6 @@ module.exports = new Promise((resolve, reject) => {
             resolve();
           }
         });
-      });
-    });
+      }
   });
 });
