@@ -107,17 +107,18 @@ function createDocumentCard(doc) {
     card.className = 'documento-card';
 
     const downloadUrl = `/api/docs/file/${doc.filename}`;
+    const safeTitle = sanitizeHTML(doc.titulo);
 
     card.innerHTML = `
         <div class="documento-icon">📄</div>
-        <h4>${doc.titulo}</h4>
+        <h4>${safeTitle}</h4>
         <div class="documento-meta">
             <span class="documento-tipo">PDF</span>
         </div>
         <a href="${downloadUrl}" 
            class="documento-btn" 
            download 
-           aria-label="Descargar ${doc.titulo}">
+           aria-label="Descargar ${safeTitle}">
             📥 Descargar
         </a>
     `;
