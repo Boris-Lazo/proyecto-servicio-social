@@ -28,7 +28,7 @@ $('recover-form').addEventListener('submit', async (e) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'No se pudo generar el enlace');
 
-        msgBox.textContent = 'Enlace generado. Revísalo en tu correo institucional.';
+        msgBox.textContent = 'Correo enviado. Revisa tu bandeja de entrada e ingresa el código.';
         msgBox.className = 'success-msg';
         $('recover-token-details').open = true;
 
@@ -49,7 +49,7 @@ $('recover-token-form').addEventListener('submit', async (e) => {
     const newPass = $('recover-new-pass').value;
 
     if (!tempToken || !newPass || newPass.length < 6) {
-        msgBox.textContent = 'Completa el enlace y la nueva contraseña (mín. 6 caracteres)';
+        msgBox.textContent = 'Ingresa el código y la nueva contraseña (mín. 6 caracteres)';
         msgBox.className = 'error-msg';
         return;
     }
@@ -72,4 +72,11 @@ $('recover-token-form').addEventListener('submit', async (e) => {
         msgBox.textContent = err.message;
         msgBox.className = 'error-msg';
     }
+});
+
+
+// ---------- MOSTRAR CONTRASEÑA ----------
+$('show-password').addEventListener('change', (e) => {
+    const passInput = $('recover-new-pass');
+    passInput.type = e.target.checked ? 'text' : 'password';
 });
