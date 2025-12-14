@@ -36,7 +36,7 @@ El sistema permite a la escuela mantener a los padres y alumnos informados sobre
 
 | Login Administrativo | Gestión de Álbumes | Vista Pública |
 |:---:|:---:|:---:|
-| ![Login](/path/to/login.png) | ![Admin](/path/to/admin.png) | ![Public](/path/to/public.png) |
+| ![Login](public/img/screenshots/login.png) | ![Admin](public/img/screenshots/admin.png) | ![Public](public/img/screenshots/public.png) |
 
 ---
 
@@ -57,6 +57,7 @@ El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada pero servida
 *   **Autenticación:** JWT (JSON Web Tokens) + Bcryptjs
 *   **Manejo de Archivos:** Multer (Subida de imágenes y PDFs)
 *   **Emails:** Nodemailer (Sistema de recuperación de contraseñas)
+*   **Calidad:** ESLint (Linting), Prettier (Formato), Jest (Testing)
 
 ### Frontend (Cliente)
 *   **Lenguajes:** HTML5 Semántico, CSS3 (Diseño Responsivo/Vanilla), JavaScript (ES6+)
@@ -191,6 +192,20 @@ npm start      # Inicia el servidor
 ```
 El servidor estará disponible en: `http://localhost:4000`.
 
+### 4. Verificación y Calidad
+El proyecto incluye herramientas para asegurar la calidad del código:
+
+```bash
+# Ejecutar pruebas unitarias/integración
+npm test
+
+# Analizar código en busca de errores (Linting)
+npm run lint
+
+# Corregir formato de código automáticamente
+npm run format
+```
+
 ---
 
 ## 🛡 Seguridad
@@ -206,9 +221,9 @@ Este proyecto implementa varias capas de seguridad estándar:
 Las contribuciones son bienvenidas. Por favor, sigue estos pasos:
 
 1.  Haz un Fork del proyecto.
-2.  Crea tu rama de funcionalidad (`git checkout -b feature/AmazingFeature`).
-3.  Haz Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`).
-4.  Push a la rama (`git push origin feature/AmazingFeature`).
+2.  Crea tu rama de funcionalidad (`git checkout -b feature/nueva-funcionalidad`).
+3.  Haz Commit de tus cambios (`git commit -m 'Añadir nueva funcionalidad'`).
+4.  Push a la rama (`git push origin feature/nueva-funcionalidad`).
 5.  Abre un Pull Request.
 
 ---
