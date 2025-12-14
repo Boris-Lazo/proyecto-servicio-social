@@ -1,5 +1,11 @@
 /* login.css – Solo estilos para el formulario de login */
 
+/* Override global main styles to ensuring login form centers relative to header */
+main {
+    position: static;
+    padding: 0;
+}
+
 /* Centrar formulario sobre la imagen de fondo */
 .login {
     position: absolute;

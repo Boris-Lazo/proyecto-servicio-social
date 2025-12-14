@@ -1,28 +1,29 @@
 /* ===== AJUSTES DE HEADER PARA EVENTOS ===== */
-.escuela-header {
-    min-height: auto !important;
-    background: transparent !important;
+body .escuela-header {
+    min-height: auto;
+    background: transparent;
+    overflow: visible;
 }
 
 .escuela-header .vista {
     display: none;
 }
 
-.navBar {
-    position: static !important;
-    background-color: var(--color-fondo) !important;
+#header-top.navBar {
+    position: static;
+    background-color: var(--color-fondo);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-body {
-    padding-top: 0 !important;
+html body {
+    padding-top: 0;
 }
 
 /* ===== EVENTOS - GALERÍA DINÁMICA ===== */
 .eventos-main {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 3rem 3rem 0 3rem;
 }
 
 .eventos-intro {
@@ -412,8 +413,8 @@ body {
         font-size: 0.9rem;
     }
 
-    #nav-menu.show {
-        background-color: var(--color-fondo) !important;
+    ul#nav-menu.show {
+        background-color: var(--color-fondo);
     }
 }
 
