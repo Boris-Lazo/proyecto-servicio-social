@@ -1,4 +1,8 @@
-# 🏫 Proyecto Escuela - Plataforma Web y Administrativa
+# 🏫 Proyecto Escuela
+
+![Node.js Version](https://img.shields.io/badge/Node.js-14%2B-green)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Status](https://img.shields.io/badge/Status-Active-success)
 
 Bienvenido a la documentación técnica del **Proyecto Escuela**. Esta aplicación web integral sirve como portal público para la comunidad educativa y como sistema de gestión de contenidos (CMS) para la administración de la institución.
 
@@ -6,14 +10,16 @@ Bienvenido a la documentación técnica del **Proyecto Escuela**. Esta aplicaci�
 
 ## 📋 Tabla de Contenidos
 1. [Visión General](#-visión-general)
-2. [Arquitectura del Sistema](#-arquitectura-del-sistema)
-3. [Stack Tecnológico](#-stack-tecnológico)
-4. [Estructura de Directorios](#-estructura-de-directorios)
-5. [Esquema de Base de Datos](#-esquema-de-base-de-datos)
-6. [Documentación de la API](#-documentación-de-la-api)
-7. [Frontend y Vistas](#-frontend-y-vistas)
+2. [Capturas de Pantalla](#-capturas-de-pantalla)
+3. [Arquitectura del Sistema](#-arquitectura-del-sistema)
+4. [Stack Tecnológico](#-stack-tecnológico)
+5. [Estructura de Directorios](#-estructura-de-directorios)
+6. [Esquema de Base de Datos](#-esquema-de-base-de-datos)
+7. [Documentación de la API](#-documentación-de-la-api)
 8. [Instalación y Configuración](#-instalación-y-configuración)
 9. [Seguridad](#-seguridad)
+10. [Contribución](#-contribución)
+11. [Autores y Licencia](#-autores-y-licencia)
 
 ---
 
@@ -22,6 +28,15 @@ El sistema permite a la escuela mantener a los padres y alumnos informados sobre
 
 *   **Público:** Puede ver galerías de fotos de eventos recientes y descargar documentos PDF (circulares, avisos).
 *   **Administrativo:** Permite subir álbumes de fotos masivos, gestionar documentos PDF y administrar la seguridad del sitio.
+
+---
+
+## 📸 Capturas de Pantalla
+*(Espacio reservado para screenshots del sistema)*
+
+| Login Administrativo | Gestión de Álbumes | Vista Pública |
+|:---:|:---:|:---:|
+| ![Login](/path/to/login.png) | ![Admin](/path/to/admin.png) | ![Public](/path/to/public.png) |
 
 ---
 
@@ -54,6 +69,7 @@ El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada pero servida
 
 ```text
 proyecto-escuela/
+├── LICENSE               # Licencia MIT
 ├── .env                  # Variables de entorno (Credenciales, claves secretas) — NO SUBIR A REPO
 ├── README.md             # Esta documentación
 ├── private/              # LÓGICA DEL SERVIDOR (BACKEND)
@@ -140,15 +156,6 @@ Todas las respuestas de la API son en formato **JSON**.
 
 ---
 
-## 🖥 Frontend y Vistas
-Cada página HTML tiene asociado un archivo CSS y JS específico para mantener la modularidad.
-
-*   **`admin.js`**: Contiene la lógica más compleja. Maneja el "Single Page Application feel" dentro del panel, cambiando entre pestañas (Subir Fotos vs. Subir Docs) y renderizando las tablas de gestión sin recargar la página.
-*   **`login.js`**: Maneja la validación de formularios y guarda el token JWT en `localStorage`.
-*   **`index-dynamic.js`**: Carga contenido dinámico en la página de inicio si es necesario.
-
----
-
 ## ⚙️ Instalación y Configuración
 
 ### 1. Prerrequisitos
@@ -192,3 +199,21 @@ Este proyecto implementa varias capas de seguridad estándar:
 2.  **Sanitización:** SQLite previenen inyecciones SQL básicas mediante el uso de *Prepared Statements*.
 3.  **No-Cache de Credenciales:** Las contraseñas nunca se viajan en texto plano excepto en el login (HTTPS recomendado en producción).
 4.  **Validación de Archivos:** El backend verifica tipos MIME (solo imágenes para álbumes, solo PDF para docs) antes de guardar nada en el disco, evitando subida de scripts maliciosos.
+
+---
+
+## 🤝 Contribución
+Las contribuciones son bienvenidas. Por favor, sigue estos pasos:
+
+1.  Haz un Fork del proyecto.
+2.  Crea tu rama de funcionalidad (`git checkout -b feature/AmazingFeature`).
+3.  Haz Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`).
+4.  Push a la rama (`git push origin feature/AmazingFeature`).
+5.  Abre un Pull Request.
+
+---
+
+## ✍️ Autores y Licencia
+Este proyecto es desarrollado por el equipo técnico del **Proyecto Escuela**.
+
+Distribuido bajo la licencia **MIT**. Ver `LICENSE` para más información.
