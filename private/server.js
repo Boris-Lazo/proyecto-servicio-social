@@ -240,6 +240,29 @@ const errorHandler = require('./middleware/errorHandler');
       });
     });
 
+    // ---------- ACTUALIZAR ÁLBUM ----------
+    app.put('/api/albums/:id', auth, (req, res, next) => {
+        const { id } = req.params;
+        const { titulo, descripcion } = req.body;
+
+        if (!titulo) {
+            return res.status(400).json({ error: 'El título es requerido' });
+        }
+
+        db.run('UPDATE albums SET titulo = ?, descripcion = ? WHERE id = ?',
+            [titulo, descripcion, id],
+            function (err) {
+                if (err) {
+                    return next({ status: 500, message: 'Error al actualizar el álbum' });
+                }
+                if (this.changes === 0) {
+                    return res.status(404).json({ error: 'Álbum no encontrado para actualizar' });
+                }
+                res.json({ ok: true, message: 'Álbum actualizado' });
+            }
+        );
+    });
+
     // ---------- ELIMINAR ÁLBUM ----------
     app.delete('/api/albums/:id', auth, (req, res, next) => {
       const { id } = req.params;

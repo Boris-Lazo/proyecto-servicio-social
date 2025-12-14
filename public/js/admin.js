@@ -352,6 +352,89 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ---------- MODAL DE EDICIÓN DE ÁLBUM ----------
+const modalEditarAlbum = $('edit-album-modal');
+const formEditarAlbum = $('edit-album-form');
+const inputIdAlbum = $('edit-album-id');
+const inputTituloAlbum = $('edit-album-titulo');
+const inputDescripcionAlbum = $('edit-album-descripcion');
+const errorModalEditar = $('edit-modal-error');
+const btnCancelarEdicion = $('edit-modal-cancel');
+
+function mostrarModalEditar(album) {
+    inputIdAlbum.value = album.id;
+    inputTituloAlbum.value = sanitizeHTML(album.titulo);
+    inputDescripcionAlbum.value = sanitizeHTML(album.descripcion || '');
+    errorModalEditar.textContent = '';
+    modalEditarAlbum.classList.add('active');
+    inputTituloAlbum.focus();
+}
+
+function ocultarModalEditar() {
+    modalEditarAlbum.classList.remove('active');
+    formEditarAlbum.reset();
+}
+
+btnCancelarEdicion.addEventListener('click', ocultarModalEditar);
+
+modalEditarAlbum.addEventListener('click', (e) => {
+    if (e.target === modalEditarAlbum) {
+        ocultarModalEditar();
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalEditarAlbum.classList.contains('active')) {
+        ocultarModalEditar();
+    }
+});
+
+formEditarAlbum.addEventListener('submit', manejarSubmitEdicionAlbum);
+
+async function manejarSubmitEdicionAlbum(e) {
+    e.preventDefault();
+    const id = inputIdAlbum.value;
+    const titulo = inputTituloAlbum.value.trim();
+    const descripcion = inputDescripcionAlbum.value.trim();
+    const token = localStorage.getItem('token');
+
+    if (!titulo) {
+        errorModalEditar.textContent = 'El título no puede estar vacío.';
+        return;
+    }
+
+    const btn = $('edit-modal-confirm');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+    errorModalEditar.textContent = '';
+
+    try {
+        const respuesta = await fetch(`/api/albums/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ titulo, descripcion })
+        });
+
+        if (!respuesta.ok) {
+            const errData = await respuesta.json();
+            throw new Error(errData.error || 'Error del servidor');
+        }
+
+        ocultarModalEditar();
+        loadAlbumsList();
+    } catch (error) {
+        console.error('Error al actualizar el álbum:', error);
+        errorModalEditar.textContent = `Error: ${error.message}`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Guardar Cambios';
+    }
+}
+
+
 // ---------- CERRAR SESIÓN ----------
 $('btn-logout').addEventListener('click', () => {
     showModal(
@@ -403,10 +486,24 @@ async function loadAlbumsList() {
                         <span>📸 ${album.fotos.length} fotos</span>
                     </div>
                 </div>
-                <button class="btn-delete" data-album-id="${album.id}">🗑️ Eliminar</button>
+                <div class="content-actions">
+                    <button class="btn-edit" data-album-id="${album.id}">✏️ Editar</button>
+                    <button class="btn-delete" data-album-id="${album.id}">🗑️ Eliminar</button>
+                </div>
             `;
 
             container.appendChild(item);
+        });
+
+        // Event listener para botones de editar
+        container.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const albumId = btn.dataset.albumId;
+                const albumData = albums.find(a => a.id === albumId);
+                if (albumData) {
+                    mostrarModalEditar(albumData);
+                }
+            });
         });
 
         // Agregar event listeners a botones de eliminar
