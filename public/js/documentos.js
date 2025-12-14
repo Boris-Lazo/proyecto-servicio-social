@@ -109,17 +109,22 @@ function createDocumentCard(doc) {
     const downloadUrl = `/api/docs/file/${doc.filename}`;
     const safeTitle = sanitizeHTML(doc.titulo);
 
+    // Params to hide PDF toolbar and nav panes for cleaner preview
+    const previewUrl = `${downloadUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`;
+
     card.innerHTML = `
-        <div class="documento-icon">📄</div>
+        <div class="documento-preview">
+            <iframe src="${previewUrl}" loading="lazy" title="Vista previa de ${safeTitle}"></iframe>
+        </div>
         <h4>${safeTitle}</h4>
         <div class="documento-meta">
             <span class="documento-tipo">PDF</span>
         </div>
         <a href="${downloadUrl}" 
            class="documento-btn" 
-           download 
-           aria-label="Descargar ${safeTitle}">
-            📥 Descargar
+           target="_blank"
+           aria-label="Ver documento ${safeTitle}">
+            👁️ Ver Documento
         </a>
     `;
 

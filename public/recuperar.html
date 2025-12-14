@@ -46,13 +46,19 @@
 
             <!-- Paso 2: Ingresar enlace y nueva contraseña -->
             <details id="recover-token-details" class="recover-token-details">
-                <summary>Tengo el enlace de recuperación</summary>
+                <summary>Tengo el código de recuperación</summary>
                 <form id="recover-token-form" class="recover-form">
-                    <label for="recover-token">Pega aquí el enlace que te llegó al correo</label>
-                    <input type="text" id="recover-token" class="form-input" placeholder="eyJhbGc..." required>
+                    <label for="recover-token">Ingresa el código de verificación</label>
+                    <input type="text" id="recover-token" class="form-input" placeholder="123456" required maxlength="6"
+                        pattern="[0-9]*">
 
                     <label for="recover-new-pass">Nueva contraseña</label>
                     <input type="password" id="recover-new-pass" class="form-input" required minlength="6">
+
+                    <div class="show-password-container">
+                        <input type="checkbox" id="show-password" class="show-password-checkbox">
+                        <label for="show-password" class="show-password-label">Mostrar contraseña</label>
+                    </div>
 
                     <button type="submit" class="btn">Establecer nueva contraseña</button>
                     <p id="recover-token-msg"></p>
@@ -75,7 +81,8 @@
 
     <!-- Scripts -->
     <script src="js/navbar-mobile.js"></script>
-    <script src="js/year-dynamic.js"></script>
+    <script src="js/year-dinamic.js"></script>
+    <script src="js/xss.js"></script>
     <script src="js/recuperar.js"></script>
 </body>
 

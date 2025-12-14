@@ -27,6 +27,12 @@ body {
     line-height: 1.6;
     color: var(--color-texto-body);
     background-color: #ffffff;
+    background-image: url('../img/girl.png'), url('../img/boy.png');
+    background-position: left, right;
+    background-repeat: no-repeat;
+    background-size: 250px auto;
+    background-attachment: fixed;
+    /* Added fixed to ensure they stay in place while scrolling */
 }
 
 /* ===== HEADER ===== */
@@ -144,6 +150,8 @@ main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 3rem 3rem 0 3rem;
+    position: relative;
+    /* Ensure positioning context if needed, though not strictly for bg */
 }
 
 main section {
@@ -318,6 +326,10 @@ main h2 {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+    body {
+        background-image: none;
+    }
+
     .menu-toggle {
         display: block;
     }

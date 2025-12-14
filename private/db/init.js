@@ -35,6 +35,12 @@ module.exports = new Promise((resolve, reject) => {
         filename TEXT NOT NULL,
         uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`);
+      db.run(`CREATE TABLE IF NOT EXISTS password_resets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_email TEXT NOT NULL,
+        token TEXT NOT NULL,
+        expires_at INTEGER NOT NULL
+      )`);
 
       // Default users
       const defaults = [
@@ -89,15 +95,15 @@ module.exports = new Promise((resolve, reject) => {
     }
 
     function closeAndResolve() {
-        db.close((err) => {
-          if (err) {
-            console.error('[DB] Error al cerrar:', err);
-            reject(err);
-          } else {
-            console.log('[DB] Base de datos inicializada');
-            resolve();
-          }
-        });
-      }
+      db.close((err) => {
+        if (err) {
+          console.error('[DB] Error al cerrar:', err);
+          reject(err);
+        } else {
+          console.log('[DB] Base de datos inicializada');
+          resolve();
+        }
+      });
+    }
   });
 });

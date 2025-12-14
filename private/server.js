@@ -4,7 +4,9 @@ const sqlite = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const auth = require('./middleware/auth');
@@ -67,7 +69,102 @@ const errorHandler = require('./middleware/errorHandler');
       });
     });
 
-    // ---------- CAMBIAR CONTRASEÑA ----------
+    // ---------- RECUPERACIÓN DE CONTRASEÑA ----------
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.ethereal.email',
+      port: process.env.SMTP_PORT || 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+
+    app.post('/api/recover', (req, res, next) => {
+      const { email } = req.body;
+      if (!email) return res.status(400).json({ error: 'Falta correo' });
+
+      db.get('SELECT * FROM users WHERE user = ?', [email], async (err, row) => {
+        if (err) return next({ status: 500, message: 'Error de BD' });
+        if (!row) {
+          // Por seguridad, no decimos si el usuario existe o no, pero simulamos éxito
+          return res.json({ ok: true, msg: 'Si el correo existe, se enviará un enlace.' });
+        }
+
+        const token = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutos
+
+        db.run('INSERT INTO password_resets (user_email, token, expires_at) VALUES (?, ?, ?)',
+          [email, token, expiresAt],
+          async function (err) {
+            if (err) return next({ status: 500, message: 'No se pudo generar token' });
+
+            const html = `
+              <div style="font-family: sans-serif; text-align: center; color: #333;">
+                <h1>Código de Recuperación</h1>
+                <p>Has solicitado restablecer tu contraseña.</p>
+                <p>Tu código de verificación es:</p>
+                <div style="background: #f0f8ff; padding: 20px; margin: 20px auto; border-radius: 8px; display: inline-block;">
+                    <span style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #0056b3;">${token}</span>
+                </div>
+                <p>Este código expira en 15 minutos.</p>
+                <small>Si no solicitaste este cambio, ignora este correo.</small>
+              </div>
+            `;
+
+            try {
+              let info = await transporter.sendMail({
+                from: `"Centro Escolar" <${process.env.SMTP_FROM}>`,
+                to: email,
+                subject: `Código de recuperación: ${token}`,
+                html: html,
+              });
+              console.log("Message sent: %s", info.messageId);
+              // Preview only available when sending through an Ethereal account
+              if (nodemailer.getTestMessageUrl(info)) {
+                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+              }
+              res.json({ ok: true });
+            } catch (error) {
+              console.error("Error sending email: ", error);
+              return next({ status: 500, message: 'Error enviando correo' });
+            }
+          });
+      });
+    });
+
+    app.post('/api/recover/change', (req, res, next) => {
+      const { tempToken, newPass } = req.body;
+      if (!tempToken || !newPass) return res.status(400).json({ error: 'Faltan datos' });
+
+      db.get('SELECT * FROM password_resets WHERE token = ?', [tempToken], (err, row) => {
+        if (err) return next({ status: 500, message: 'Error de BD' });
+        if (!row) return res.status(400).json({ error: 'Token inválido o expirado' });
+
+        if (Date.now() > row.expires_at) {
+          db.run('DELETE FROM password_resets WHERE token = ?', [tempToken]); // Clanup
+          return res.status(400).json({ error: 'Token expirado' });
+        }
+
+        const email = row.user_email;
+
+        // Update password
+        bcrypt.hash(newPass, 10, (err, newHash) => {
+          if (err) return next({ status: 500, message: 'Error en hash' });
+
+          db.run('UPDATE users SET hash = ? WHERE user = ?', [newHash, email], function (err) {
+            if (err) return next({ status: 500, message: 'Error actualizando pass' });
+
+            // Delete used token
+            db.run('DELETE FROM password_resets WHERE token = ?', [tempToken]);
+            res.json({ ok: true, msg: 'Contraseña actualizada' });
+          });
+        });
+      });
+    });
+
+    // ---------- CAMBIAR CONTRASEÑA (Dashbaord) ----------
     app.post('/api/change-password', auth, (req, res, next) => {
       const { oldPass, newPass } = req.body;
       if (!oldPass || !newPass) return res.status(400).json({ error: 'Faltan campos' });
@@ -121,7 +218,7 @@ const errorHandler = require('./middleware/errorHandler');
       const { titulo, fecha, descripcion } = req.body;
       if (!titulo || !fecha) return res.status(400).json({ error: 'Faltan título o fecha' });
       const slug = titulo.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      req.folderName = `${fecha}-${slug}`;
+      req.folderName = `${fecha} - ${slug}`;
       next();
     }, upload.array('fotos', 30), (req, res, next) => {
       const fotos = req.files.map(f => f.filename);
@@ -184,7 +281,7 @@ const errorHandler = require('./middleware/errorHandler');
       },
       filename: (_req, file, cb) => {
         const safe = file.originalname.replace(/[^a-z0-9.-]/gi, '_');
-        cb(null, `${Date.now()}-${safe}`);
+        cb(null, `${Date.now()} - ${safe}`);
       }
     });
     const uploadDoc = multer({
