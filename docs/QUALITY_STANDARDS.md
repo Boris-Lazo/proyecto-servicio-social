@@ -12,23 +12,25 @@ Utilizamos las siguientes herramientas automatizadas:
 ## 3. Guía de Estilo
 
 ### JavaScript (General)
--   **Identación**: 2 espacios.
+-   **Sangría (Identación)**: 2 espacios.
 -   **Comillas**: Simples (`'`).
 -   **Punto y coma**: Obligatorio al final de las sentencias.
 -   **Variables**: Preferir `const` y `let`. Evitar `var`.
--   **Funciones**: Preferir *Arrow Functions* para callbacks y funciones anónimas.
+-   **Funciones**: Preferir *Funciones Flecha* (Arrow Functions) para funciones anónimas.
 
-### Naming Conventions
--   **Archivos**: `kebab-case` (ej. `user-controller.js`).
--   **Clases**: `PascalCase` (ej. `UserController`).
--   **Variables/Funciones**: `camelCase` (ej. `getUser`).
--   **Constantes**: `UPPER_SNAKE_CASE` (ej. `MAX_RETRIES`).
+### Convenciones de Nombres
+-   **Archivos**: `kebab-case` (minúsculas separadas por guiones, ej. `controlador-usuario.js`).
+-   **Clases**: `PascalCase` (Primera letra mayúscula, ej. `ControladorUsuario`).
+-   **Variables/Funciones**: `camelCase` (primera minúscula, siguientes mayúsculas, ej. `obtenerUsuario`).
+-   **Constantes**: `UPPER_SNAKE_CASE` (mayúsculas con guion bajo, ej. `MAX_INTENTOS`).
 
 ## 4. Pruebas (Testing)
 -   Todos los nuevos módulos deben incluir pruebas unitarias.
--   Usar `npm test` para ejecutar la suite de pruebas.
+-   Usar `npm test` para ejecutar el conjunto de pruebas.
 -   Mínimo de cobertura aceptable: 70% (objetivo futuro).
 
 ## 5. Control de Versiones (Git)
--   **Commits**: Usar verbos en imperativo (ej. "Add login validation", "Fix crash on startup").
--   **Ramas**: `feature/nombre-feature`, `bugfix/nombre-bug`.
+-   **Mensajes de Confirmación (Commits)**: Usar verbos en imperativo en español (ej. "Agregar validación de login", "Arreglar error al iniciar").
+-   **Ramas (Branches)**:
+    -   `feature/nombre-funcionalidad` (para nuevas características)
+    -   `bugfix/nombre-error` (para correcciones)
