@@ -1,16 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const logStream = fs.createWriteStream(path.join(__dirname, '..', 'error.log'), { flags: 'a' });
+const flujoLog = fs.createWriteStream(path.join(__dirname, '..', 'error.log'), { flags: 'a' });
 
 function manejadorDeErrores(err, req, res, next) {
-  const { status = 500, message = 'Internal Server Error' } = err;
-  const logMessage = `[${new Date().toISOString()}] ${req.method} ${req.url} - ${status} - ${message}\n`;
+  const { estado = 500, mensaje = 'Internal Server Error' } = err;
+  const mensajeLog = `[${new Date().toISOString()}] ${req.method} ${req.url} - ${estado} - ${mensaje}\n`;
 
-  logStream.write(logMessage);
-  console.error(logMessage);
+  flujoLog.write(mensajeLog);
+  console.error(mensajeLog);
 
-  res.status(status).json({ error: message });
+  res.status(estado).json({ error: mensaje });
 }
 
 module.exports = manejadorDeErrores;
