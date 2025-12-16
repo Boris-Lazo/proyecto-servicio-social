@@ -66,8 +66,8 @@ function createAlbumCard(album) {
         day: 'numeric'
     });
 
-    const safeTitle = sanitizeHTML(album.titulo);
-    const safeDescription = sanitizeHTML(album.descripcion);
+    const safeTitle = sanitizarHTML(album.titulo);
+    const safeDescription = sanitizarHTML(album.descripcion);
 
     card.innerHTML = `
         <div class="album-cover">
@@ -140,7 +140,7 @@ function updateLightboxContent() {
         day: 'numeric'
     });
 
-    const safeTitle = sanitizeHTML(currentAlbum.titulo);
+    const safeTitle = sanitizarHTML(currentAlbum.titulo);
 
     lightboxInfo.innerHTML = `
         <h3>${safeTitle}</h3>

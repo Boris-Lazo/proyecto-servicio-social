@@ -397,7 +397,7 @@ async function loadAlbumsList() {
 
             item.innerHTML = `
                 <div class="content-info">
-                    <h4>${sanitizeHTML(album.titulo)}</h4>
+                    <h4>${sanitizarHTML(album.titulo)}</h4>
                     <div class="content-meta">
                         <span>📅 ${formattedDate}</span>
                         <span>📸 ${album.fotos.length} fotos</span>
@@ -462,7 +462,7 @@ async function loadDocsList() {
 
             item.innerHTML = `
                 <div class="content-info">
-                    <h4>${sanitizeHTML(doc.titulo)}</h4>
+                    <h4>${sanitizarHTML(doc.titulo)}</h4>
                     <div class="content-meta">
                         <span>📅 ${monthName} ${year}</span>
                         <span>📄 PDF</span>

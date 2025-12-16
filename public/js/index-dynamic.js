@@ -39,8 +39,8 @@ function renderAlbumPreview(album, container) {
         day: 'numeric'
     });
 
-    const safeTitle = sanitizeHTML(album.titulo);
-    const safeDescription = sanitizeHTML(album.descripcion);
+    const safeTitle = sanitizarHTML(album.titulo);
+    const safeDescription = sanitizarHTML(album.descripcion);
 
     container.innerHTML = `
         <div class="preview-card">
@@ -90,7 +90,7 @@ async function loadLatestDocument() {
 function renderDocumentPreview(doc, container) {
     const [year, month] = doc.mes.split('-');
     const monthName = getMonthName(parseInt(month));
-    const safeTitle = sanitizeHTML(doc.titulo);
+    const safeTitle = sanitizarHTML(doc.titulo);
 
     container.innerHTML = `
         <div class="preview-card doc-preview">

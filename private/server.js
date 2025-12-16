@@ -9,8 +9,8 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
-const auth = require('./middleware/auth');
-const errorHandler = require('./middleware/errorHandler');
+const auth = require('./middleware/autenticacion');
+const manejadorDeErrores = require('./middleware/manejadorDeErrores');
 
 // Inicializar la aplicación de forma asíncrona
 (async () => {
@@ -352,7 +352,7 @@ const errorHandler = require('./middleware/errorHandler');
       next();
     });
 
-    app.use(errorHandler);
+    app.use(manejadorDeErrores);
 
     // ---------- ARRANCAR ----------
     const PORT = process.env.PORT || 4000;
