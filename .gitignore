@@ -1,15 +1,23 @@
-# Variables de entorno (nunca subas esto)
-private/.env
+# Archivo para ignorar archivos y carpetas en Git
 
-# Base de datos (opcional, pero recomendado)
-private/db/*.sqlite
+# Dependencias
+/node_modules
+/private/node_modules
 
-# Archivos subidos por las maestras (solo lectura)
-private/upload/
+# Archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Node modules (si algún día usas dependencias globales)
-node_modules/
+# Variables de entorno
+# ¡NUNCA subas archivos .env a un repositorio!
+.env
+.env.*
+!.env.example
 
-# Archivos del sistema
+# Archivos de base de datos
+*.sqlite
+
+# Archivos del sistema operativo
 .DS_Store
 Thumbs.db
