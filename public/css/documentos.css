@@ -12,16 +12,20 @@ body .escuela-header {
     display: none;
 }
 
-/* Navegación sin transparencia y posición estática */
+/* Navegación fija y sin transparencia */
 #header-top.navBar {
-    position: static;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     background-color: var(--color-fondo);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
 }
 
-/* Asegurar que el main no tenga padding-top extra */
+/* Añadir padding al body para compensar la navbar fija */
 html body {
-    padding-top: 0;
+    padding-top: 70px; /* Ajusta este valor si la altura de tu navbar cambia */
 }
 
 .documentos-main {
@@ -273,6 +277,10 @@ html body {
 @media (max-width: 768px) {
     .documentos-main {
         padding: 1.5rem 1rem;
+    }
+    
+    html body {
+        padding-top: 55px;
     }
 
     .documentos-intro {
