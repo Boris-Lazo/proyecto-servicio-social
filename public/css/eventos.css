@@ -10,13 +10,17 @@ body .escuela-header {
 }
 
 #header-top.navBar {
-    position: static;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     background-color: var(--color-fondo);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
 }
 
 html body {
-    padding-top: 0;
+    padding-top: 70px; /* Ajusta este valor si la altura de tu navbar cambia */
 }
 
 /* ===== EVENTOS - GALERÍA DINÁMICA ===== */
@@ -360,6 +364,10 @@ html body {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+    html body {
+        padding-top: 55px;
+    }
+
     #albums-container {
         grid-template-columns: 1fr;
         gap: 1.5rem;
