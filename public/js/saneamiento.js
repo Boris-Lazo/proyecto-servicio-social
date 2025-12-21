@@ -1,4 +1,4 @@
-// xss.js - Funciones para prevenir ataques XSS
+// saneamiento.js - Funciones para prevenir ataques XSS
 
 /**
  * Sanitiza una cadena de texto para evitar la inyección de HTML.
@@ -7,7 +7,7 @@
  * @param {string} unsafeString - La cadena de texto a sanitizar.
  * @returns {string} - La cadena de texto sanitizada.
  */
-function sanitizeHTML(unsafeString) {
+function sanitizarHTML(unsafeString) {
   if (typeof unsafeString !== 'string') {
     return '';
   }

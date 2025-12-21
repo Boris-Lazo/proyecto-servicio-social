@@ -107,7 +107,7 @@ function createDocumentCard(doc) {
     card.className = 'documento-card';
 
     const downloadUrl = `/api/docs/file/${doc.filename}`;
-    const safeTitle = sanitizeHTML(doc.titulo);
+    const safeTitle = sanitizarHTML(doc.titulo);
 
     // Params to hide PDF toolbar and nav panes for cleaner preview
     const previewUrl = `${downloadUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`;

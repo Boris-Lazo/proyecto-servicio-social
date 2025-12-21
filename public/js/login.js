@@ -5,43 +5,43 @@ function $(id) { return document.getElementById(id); }
 
 // ---------- MOSTRAR/OCULTAR CONTRASEÑA ----------
 $('show-password').addEventListener('change', (e) => {
-    const passwordInput = $('password');
-    passwordInput.type = e.target.checked ? 'text' : 'password';
+    const campoContrasena = $('password');
+    campoContrasena.type = e.target.checked ? 'text' : 'password';
 });
 
 // ---------- LOGIN ----------
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = $('user').value.trim();
-    const password = $('password').value;
+    const correo = $('user').value.trim();
+    const contrasena = $('password').value;
 
-    if (!email || !password) {
+    if (!correo || !contrasena) {
         alert('Por favor completa todos los campos');
         return;
     }
 
     try {
-        const res = await fetch('/api/login', {
+        const respuesta = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: email, password })
+            body: JSON.stringify({ user: correo, password: contrasena })
         });
 
         // Verificar si la respuesta tiene contenido
-        const text = await res.text();
-        if (!text) {
+        const texto = await respuesta.text();
+        if (!texto) {
             throw new Error('El servidor no respondió correctamente');
         }
 
-        const data = JSON.parse(text);
+        const datos = JSON.parse(texto);
 
-        if (!res.ok) {
-            throw new Error(data.error || 'Credenciales incorrectas');
+        if (!respuesta.ok) {
+            throw new Error(datos.error || 'Credenciales incorrectas');
         }
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', email);
+        localStorage.setItem('token', datos.token);
+        localStorage.setItem('user', correo);
         window.location.href = 'admin.html';
 
     } catch (err) {
