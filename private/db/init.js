@@ -71,7 +71,7 @@ module.exports = new Promise((resolve, reject) => {
                 db.close();
                 return reject(err);
               }
-              insertTestData();
+              closeAndResolve();
             });
           })
           .catch(err => {
@@ -80,19 +80,11 @@ module.exports = new Promise((resolve, reject) => {
             reject(err);
           });
       } else {
-        insertTestData();
+        closeAndResolve();
       }
     });
 
-    function insertTestData() {
-      const albumStmt = db.prepare('INSERT OR IGNORE INTO albums (id, titulo, fecha, descripcion, fotos) VALUES (?, ?, ?, ?, ?)');
-      albumStmt.run('test-album', 'Test Album', '2024-01-01', '<script>alert("xss")</script>', '[]');
-      albumStmt.finalize();
 
-      const docStmt = db.prepare('INSERT OR IGNORE INTO docs (titulo, mes, filename) VALUES (?, ?, ?)');
-      docStmt.run('Test Document', '2024-01', 'test.pdf');
-      docStmt.finalize(closeAndResolve);
-    }
 
     function closeAndResolve() {
       db.close((err) => {
