@@ -8,6 +8,7 @@
         content="Centro educativo en El Amatal que ofrece educación básica para niños y adolescentes.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/eventos.css">
+    <link rel="stylesheet" href="css/gallery.css">
     <link rel="icon" href="img/icoSV.ico" type="image/x-icon">
     <title>CENTRO ESCOLAR "CANTÓN EL AMATAL" - Eventos</title>
 </head>
@@ -47,18 +48,21 @@
         </div>
     </main>
 
-    <!-- Lightbox para ver fotos en grande -->
+    <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
-        <button id="lightbox-close" class="lightbox-close" aria-label="Cerrar">×</button>
+        <button id="lightbox-close" class="lightbox-close" aria-label="Cerrar">&times;</button>
 
-        <div class="lightbox-content">
-            <button id="lightbox-prev" class="lightbox-nav lightbox-prev" aria-label="Anterior">‹</button>
+        <div class="lightbox-main-area">
+            <button id="lightbox-prev" class="lightbox-nav lightbox-prev" aria-label="Anterior">&#10094;</button>
             <img id="lightbox-image" class="lightbox-image" src="" alt="">
-            <button id="lightbox-next" class="lightbox-nav lightbox-next" aria-label="Siguiente">›</button>
+            <button id="lightbox-next" class="lightbox-nav lightbox-next" aria-label="Siguiente">&#10095;</button>
+
+            <div id="lightbox-info" class="lightbox-info"></div>
+            <div id="lightbox-counter" class="lightbox-counter"></div>
         </div>
 
-        <div id="lightbox-info" class="lightbox-info"></div>
-        <div id="lightbox-counter" class="lightbox-counter"></div>
+        <!-- Tira de miniaturas -->
+        <div class="lightbox-sidebar"></div>
     </div>
 
     <footer>
@@ -70,6 +74,7 @@
     <script src="js/navbar-mobile.js"></script>
     <script src="js/year-dinamic.js"></script>
     <script src="js/xss.js"></script>
+    <script src="js/lightbox.js"></script>
     <script src="js/eventos.js"></script>
 </body>
 

@@ -28,3 +28,6 @@ yarn-error.log
 # Archivos del sistema operativo
 .DS_Store
 Thumbs.db
+
+# Base de datos
+/private/db/escuela.sqlite
