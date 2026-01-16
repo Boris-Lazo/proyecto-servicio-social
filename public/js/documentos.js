@@ -103,32 +103,28 @@ function renderDocuments() {
 
 // ---------- CREAR TARJETA DE DOCUMENTO ----------
 function createDocumentCard(doc) {
-    const card = document.createElement('article');
-    card.className = 'documento-card';
+    const cardLink = document.createElement('a');
+    cardLink.href = `/api/docs/file/${doc.filename}`;
+    cardLink.target = '_blank';
+    cardLink.className = 'documento-card-link';
+
+    const safeTitle = sanitizeHTML(doc.titulo);
+    cardLink.setAttribute('aria-label', `Ver documento ${safeTitle}`);
 
     const downloadUrl = `/api/docs/file/${doc.filename}`;
-    const safeTitle = sanitizeHTML(doc.titulo);
+    // URL del thumbnail
+    const thumbnailUrl = `/api/docs/thumbnail/${doc.filename}`;
 
-    // Params to hide PDF toolbar and nav panes for cleaner preview
-    const previewUrl = `${downloadUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`;
-
-    card.innerHTML = `
-        <div class="documento-preview">
-            <iframe src="${previewUrl}" loading="lazy" title="Vista previa de ${safeTitle}"></iframe>
-        </div>
-        <h4>${safeTitle}</h4>
-        <div class="documento-meta">
-            <span class="documento-tipo">PDF</span>
-        </div>
-        <a href="${downloadUrl}" 
-           class="documento-btn" 
-           target="_blank"
-           aria-label="Ver documento ${safeTitle}">
-            👁️ Ver Documento
-        </a>
+    cardLink.innerHTML = `
+        <article class="documento-card">
+            <div class="documento-preview">
+                <img src="${thumbnailUrl}" alt="Vista previa de ${safeTitle}" loading="lazy">
+            </div>
+            <h4>${safeTitle}</h4>
+        </article>
     `;
 
-    return card;
+    return cardLink;
 }
 
 // ---------- OBTENER NOMBRE DEL MES ----------
