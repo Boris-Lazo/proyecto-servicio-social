@@ -13,7 +13,7 @@ $('show-password').addEventListener('change', (e) => {
 $('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = $('user').value.trim();
+    const email = $('usuario').value.trim();
     const password = $('password').value;
 
     if (!email || !password) {
@@ -22,10 +22,10 @@ $('login-form').addEventListener('submit', async (e) => {
     }
 
     try {
-        const data = await api.post('/api/login', { user: email, password });
+        const data = await api.enviar('/api/login', { usuario: email, contrasena: password });
 
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', email);
+        localStorage.setItem('usuario', email);
         window.location.href = 'admin.html';
 
     } catch (err) {

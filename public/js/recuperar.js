@@ -19,14 +19,7 @@ $('recover-form').addEventListener('submit', async (e) => {
     }
 
     try {
-        const res = await fetch('/api/recover', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo generar el enlace');
+        const data = await api.enviar('/api/recover', { correo: email });
 
         msgBox.textContent = 'Correo enviado. Revisa tu bandeja de entrada e ingresa el código.';
         msgBox.className = 'success-msg';
@@ -45,24 +38,17 @@ $('recover-token-form').addEventListener('submit', async (e) => {
     msgBox.textContent = '';
     msgBox.className = '';
 
-    const tempToken = $('recover-token').value.trim();
-    const newPass = $('recover-new-pass').value;
+    const tokenTemporal = $('recover-token').value.trim();
+    const nuevaClave = $('recover-new-pass').value;
 
-    if (!tempToken || !newPass || newPass.length < 6) {
+    if (!tokenTemporal || !nuevaClave || nuevaClave.length < 6) {
         msgBox.textContent = 'Ingresa el código y la nueva contraseña (mín. 6 caracteres)';
         msgBox.className = 'error-msg';
         return;
     }
 
     try {
-        const res = await fetch('/api/recover/change', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tempToken, newPass })
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Enlace expirado o inválido');
+        await api.enviar('/api/recover/change', { tokenTemporal, nuevaClave });
 
         msgBox.textContent = 'Contraseña actualizada. Redirigiendo...';
         msgBox.className = 'success-msg';

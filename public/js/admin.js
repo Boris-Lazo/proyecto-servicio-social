@@ -20,15 +20,15 @@ function resetMsgs(...boxes) {
 // ---------- VERIFICAR AUTENTICACIÓN ----------
 function checkAuth() {
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    const usuario = localStorage.getItem('usuario');
 
-    if (!token || !user) {
+    if (!token || !usuario) {
         window.location.href = 'login.html';
         return false;
     }
 
     // Mapear email a nombre de rol
-    const userNames = {
+    const nombresUsuarios = {
         'directora@amatal.edu.sv': 'Directora',
         'ericka.flores@clases.edu.sv': 'Subdirectora',
         'borisstanleylazocastillo@gmail.com': 'Desarrollador'
@@ -37,7 +37,7 @@ function checkAuth() {
     // Mostrar nombre del usuario
     const userNameEl = $('user-name');
     if (userNameEl) {
-        userNameEl.textContent = userNames[user] || user;
+        userNameEl.textContent = nombresUsuarios[usuario] || usuario;
     }
 
     return true;
@@ -79,7 +79,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 async function loadStats() {
     try {
         // Cargar álbumes
-        const albums = await api.get('/api/albums');
+        const albums = await api.obtener('/api/albums');
         $('stat-albums').textContent = albums.length || 0;
 
         // Contar fotos totales
@@ -93,7 +93,7 @@ async function loadStats() {
         }
 
         // Cargar documentos
-        const docs = await api.get('/api/docs');
+        const docs = await api.obtener('/api/docs');
         $('stat-docs').textContent = docs.length || 0;
     } catch (err) {
         console.error('Error al cargar estadísticas:', err);
@@ -170,7 +170,7 @@ $('album-form').addEventListener('submit', async (e) => {
     btn.textContent = 'Subiendo…';
 
     try {
-        const response = await api.upload('/api/albums', formData, (porc) => {
+        const response = await api.subir('/api/albums', formData, (porc) => {
             $('progress').value = porc;
             $('progress-text').textContent = `${porc}%`;
         });
@@ -220,7 +220,7 @@ $('doc-form').addEventListener('submit', async (e) => {
     btn.textContent = 'Subiendo…';
 
     try {
-        await api.upload('/api/docs', formData, (porc) => {
+        await api.subir('/api/docs', formData, (porc) => {
             $('progress-doc').value = porc;
             $('progress-text-doc').textContent = `${porc}%`;
         });
@@ -297,7 +297,7 @@ $('btn-logout').addEventListener('click', () => {
         'Cerrar Sesión',
         () => {
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem('usuario');
             window.location.href = 'login.html';
         }
     );
@@ -309,7 +309,7 @@ $('btn-logout').addEventListener('click', () => {
 async function loadAlbumsList() {
     const container = $('albums-list');
     try {
-        const albums = await api.get('/api/albums');
+        const albums = await api.obtener('/api/albums');
 
         if (albums.length === 0) {
             container.innerHTML = '<p class="empty-list">No hay álbumes publicados.</p>';
@@ -365,7 +365,7 @@ async function loadAlbumsList() {
 async function loadDocsList() {
     const container = $('docs-list');
     try {
-        const docs = await api.get('/api/docs');
+        const docs = await api.obtener('/api/docs');
 
         if (docs.length === 0) {
             container.innerHTML = '<p class="empty-list">No hay documentos publicados.</p>';
@@ -421,7 +421,7 @@ async function loadDocsList() {
 // Eliminar álbum
 async function deleteAlbum(albumId) {
     try {
-        await api.delete(`/api/albums/${albumId}`);
+        await api.eliminar(`/api/albums/${albumId}`);
         loadAlbumsList();
         loadStats();
     } catch (error) {
@@ -433,7 +433,7 @@ async function deleteAlbum(albumId) {
 // Eliminar documento
 async function deleteDocument(docId) {
     try {
-        await api.delete(`/api/docs/${docId}`);
+        await api.eliminar(`/api/docs/${docId}`);
         loadDocsList();
         loadStats();
     } catch (error) {

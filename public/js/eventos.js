@@ -10,7 +10,7 @@ const albumsContainer = document.getElementById('albums-container');
 async function loadAlbums() {
     try {
         albumsContainer.innerHTML = '<div class="loading-message">Cargando eventos...</div>';
-        albums = await api.get('/api/albums');
+        albums = await api.obtener('/api/albums');
 
         if (albums.length === 0) {
             albumsContainer.innerHTML = '<div class="empty-message">No hay eventos publicados aún.<br>Vuelve pronto para ver las fotos de nuestros eventos.</div>';
