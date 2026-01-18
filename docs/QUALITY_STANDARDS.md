@@ -1,36 +1,30 @@
 # Estándares de Calidad y Codificación
 
 ## 1. Introducción
-Este documento define los estándares técnicos para mantener la calidad del código en el **Proyecto Escuela**.
+Este documento define los estándares técnicos para mantener la calidad del código en el **Proyecto Escuela**, enfocándose en la arquitectura SOLID y el uso del idioma español en el desarrollo.
 
-## 2. Herramientas de Calidad
-Utilizamos las siguientes herramientas automatizadas:
--   **ESLint**: Para análisis estático de código (detectar errores y malas prácticas).
--   **Prettier**: Para formateo automático de código.
--   **Jest**: Para pruebas unitarias e integración.
+## 2. Arquitectura y Diseño
+El proyecto sigue una **Arquitectura de Capas** para garantizar el desacoplamiento y la testabilidad:
+-   **Controladores**: Única capa que conoce el protocolo HTTP.
+-   **Servicios**: Donde reside la lógica de negocio pura. No conocen HTTP ni la base de datos directamente.
+-   **Repositorios**: Encargados únicamente de las consultas a la base de datos.
+-   **Inyección de Dependencias**: Todas las dependencias deben inyectarse a través del constructor.
 
-## 3. Guía de Estilo
+## 3. Idioma y Nomenclatura
+**Todo el nuevo código debe escribirse en español.**
+-   **Variables y Funciones**: `camelCase` en español (ej. `obtenerUsuario`).
+-   **Clases**: `PascalCase` en español (ej. `RepositorioAlbum`).
+-   **Archivos**: `PascalCase` para clases y `kebab-case` para otros archivos (ej. `ControladorAuth.js`, `cliente-api.js`).
+-   **Comentarios**: Siempre en español, explicando el *porqué* más que el *qué*.
 
-### JavaScript (General)
--   **Sangría (Identación)**: 2 espacios.
--   **Comillas**: Simples (`'`).
--   **Punto y coma**: Obligatorio al final de las sentencias.
--   **Variables**: Preferir `const` y `let`. Evitar `var`.
--   **Funciones**: Preferir *Funciones Flecha* (Arrow Functions) para funciones anónimas.
+## 4. Herramientas de Calidad
+-   **ESLint**: Configurado para detectar errores comunes.
+-   **Prettier**: Asegura un formato consistente.
+-   **Jest**: Marco de pruebas para unitarias e integración.
 
-### Convenciones de Nombres
--   **Archivos**: `kebab-case` (minúsculas separadas por guiones, ej. `controlador-usuario.js`).
--   **Clases**: `PascalCase` (Primera letra mayúscula, ej. `ControladorUsuario`).
--   **Variables/Funciones**: `camelCase` (primera minúscula, siguientes mayúsculas, ej. `obtenerUsuario`).
--   **Constantes**: `UPPER_SNAKE_CASE` (mayúsculas con guion bajo, ej. `MAX_INTENTOS`).
+## 5. Pruebas (Testing)
+-   Cada nueva funcionalidad en la capa de **Servicio** o **Repositorio** debe tener su prueba correspondiente.
+-   Los controladores se prueban idealmente mediante pruebas de integración.
 
-## 4. Pruebas (Testing)
--   Todos los nuevos módulos deben incluir pruebas unitarias.
--   Usar `npm test` para ejecutar el conjunto de pruebas.
--   Mínimo de cobertura aceptable: 70% (objetivo futuro).
-
-## 5. Control de Versiones (Git)
--   **Mensajes de Confirmación (Commits)**: Usar verbos en imperativo en español (ej. "Agregar validación de login", "Arreglar error al iniciar").
--   **Ramas (Branches)**:
-    -   `feature/nombre-funcionalidad` (para nuevas características)
-    -   `bugfix/nombre-error` (para correcciones)
+## 6. Git y Commits
+-   Mensajes en español y tiempo imperativo: "Refactorizar capa de datos", "Corregir bug en login".
