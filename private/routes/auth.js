@@ -1,13 +1,13 @@
 const express = require('express');
 const { z } = require('zod');
-const AuthController = require('../controllers/AuthController');
+const { authController } = require('../container');
 const auth = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { loginLimiter, recoveryLimiter } = require('../middleware/rateLimit');
 
 const router = express.Router();
 
-// Esquemas de validación con Zod
+// Esquemas de validación
 const loginSchema = z.object({
     user: z.string().email('Email inválido').min(1, 'Email requerido'),
     password: z.string().min(1, 'Contraseña requerida'),
@@ -27,32 +27,32 @@ const resetPasswordSchema = z.object({
     newPass: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
 });
 
-// Rutas
+// Rutas vinculadas a la instancia del controlador
 router.post(
     '/login',
     loginLimiter,
     validate(loginSchema),
-    AuthController.login.bind(AuthController)
+    (req, res, next) => authController.login(req, res, next)
 );
 
 router.post(
     '/change-password',
     auth,
     validate(changePasswordSchema),
-    AuthController.changePassword.bind(AuthController)
+    (req, res, next) => authController.changePassword(req, res, next)
 );
 
 router.post(
     '/recover',
     recoveryLimiter,
     validate(recoverSchema),
-    AuthController.recover.bind(AuthController)
+    (req, res, next) => authController.recover(req, res, next)
 );
 
 router.post(
     '/recover/change',
     validate(resetPasswordSchema),
-    AuthController.resetPassword.bind(AuthController)
+    (req, res, next) => authController.resetPassword(req, res, next)
 );
 
 module.exports = router;

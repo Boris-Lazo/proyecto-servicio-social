@@ -1,21 +1,22 @@
-const DocumentService = require('../services/DocumentService');
-
 /**
  * Controlador de documentos
- * Maneja peticiones HTTP relacionadas con documentos PDF
  */
 class DocumentController {
     /**
+     * @param {DocumentService} documentService
+     */
+    constructor(documentService) {
+        this.documentService = documentService;
+    }
+
+    /**
      * Crear un nuevo documento
-     * @route POST /api/docs
      */
     async createDocument(req, res, next) {
         try {
             const { titulo, mes } = req.body;
             const file = req.file;
-
-            const result = await DocumentService.createDocument({ titulo, mes }, file);
-
+            const result = await this.documentService.createDocument({ titulo, mes }, file);
             res.json({ ok: true, ...result });
         } catch (error) {
             next(error);
@@ -24,11 +25,10 @@ class DocumentController {
 
     /**
      * Listar todos los documentos
-     * @route GET /api/docs
      */
     async listDocuments(req, res, next) {
         try {
-            const documents = await DocumentService.listDocuments();
+            const documents = await this.documentService.listDocuments();
             res.json(documents);
         } catch (error) {
             next(error);
@@ -37,14 +37,11 @@ class DocumentController {
 
     /**
      * Eliminar un documento
-     * @route DELETE /api/docs/:id
      */
     async deleteDocument(req, res, next) {
         try {
             const { id } = req.params;
-
-            await DocumentService.deleteDocument(parseInt(id, 10));
-
+            await this.documentService.deleteDocument(parseInt(id, 10));
             res.json({ ok: true, message: 'Documento eliminado' });
         } catch (error) {
             next(error);
@@ -53,14 +50,11 @@ class DocumentController {
 
     /**
      * Obtener thumbnail de un documento
-     * @route GET /api/docs/thumbnail/:filename
      */
     async getThumbnail(req, res, next) {
         try {
             const { filename } = req.params;
-
-            const thumbnailPath = await DocumentService.getThumbnail(filename);
-
+            const thumbnailPath = await this.documentService.getThumbnail(filename);
             res.sendFile(thumbnailPath);
         } catch (error) {
             next(error);
@@ -68,4 +62,4 @@ class DocumentController {
     }
 }
 
-module.exports = new DocumentController();
+module.exports = DocumentController;

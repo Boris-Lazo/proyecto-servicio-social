@@ -1,24 +1,22 @@
-const AlbumService = require('../services/AlbumService');
-
 /**
  * Controlador de álbumes
- * Maneja peticiones HTTP relacionadas con álbumes de fotos
  */
 class AlbumController {
     /**
+     * @param {AlbumService} albumService
+     */
+    constructor(albumService) {
+        this.albumService = albumService;
+    }
+
+    /**
      * Crear un nuevo álbum
-     * @route POST /api/albums
      */
     async createAlbum(req, res, next) {
         try {
             const { titulo, fecha, descripcion } = req.body;
             const files = req.files;
-
-            const album = await AlbumService.createAlbum(
-                { titulo, fecha, descripcion },
-                files
-            );
-
+            const album = await this.albumService.createAlbum({ titulo, fecha, descripcion }, files);
             res.status(201).json({ ok: true, album });
         } catch (error) {
             next(error);
@@ -27,11 +25,10 @@ class AlbumController {
 
     /**
      * Listar todos los álbumes
-     * @route GET /api/albums
      */
     async listAlbums(req, res, next) {
         try {
-            const albums = await AlbumService.listAlbums();
+            const albums = await this.albumService.listAlbums();
             res.json(albums);
         } catch (error) {
             next(error);
@@ -40,14 +37,11 @@ class AlbumController {
 
     /**
      * Eliminar un álbum
-     * @route DELETE /api/albums/:id
      */
     async deleteAlbum(req, res, next) {
         try {
             const { id } = req.params;
-
-            await AlbumService.deleteAlbum(id);
-
+            await this.albumService.deleteAlbum(id);
             res.json({ ok: true, message: 'Álbum eliminado' });
         } catch (error) {
             next(error);
@@ -55,4 +49,4 @@ class AlbumController {
     }
 }
 
-module.exports = new AlbumController();
+module.exports = AlbumController;

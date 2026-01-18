@@ -1,23 +1,21 @@
 const express = require('express');
-const DocumentController = require('../controllers/DocumentController');
+const { documentController } = require('../container');
 const auth = require('../middleware/auth');
 const { uploadDocument } = require('../config/multer');
 
 const router = express.Router();
 
-// Ruta para thumbnails (debe ir antes de '/' para evitar conflictos)
-router.get('/thumbnail/:filename', DocumentController.getThumbnail.bind(DocumentController));
+router.get('/thumbnail/:filename', (req, res, next) => documentController.getThumbnail(req, res, next));
 
-// Rutas de documentos
 router.post(
     '/',
     auth,
     uploadDocument.single('doc'),
-    DocumentController.createDocument.bind(DocumentController)
+    (req, res, next) => documentController.createDocument(req, res, next)
 );
 
-router.get('/', DocumentController.listDocuments.bind(DocumentController));
+router.get('/', (req, res, next) => documentController.listDocuments(req, res, next));
 
-router.delete('/:id', auth, DocumentController.deleteDocument.bind(DocumentController));
+router.delete('/:id', auth, (req, res, next) => documentController.deleteDocument(req, res, next));
 
 module.exports = router;

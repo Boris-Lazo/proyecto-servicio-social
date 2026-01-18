@@ -78,37 +78,23 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // ---------- CARGAR ESTADÍSTICAS ----------
 async function loadStats() {
     try {
-        const token = localStorage.getItem('token');
-
         // Cargar álbumes
-        const albumsRes = await fetch('/api/albums', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
+        const albums = await api.get('/api/albums');
+        $('stat-albums').textContent = albums.length || 0;
 
-        if (albumsRes.ok) {
-            const albums = await albumsRes.json();
-            $('stat-albums').textContent = albums.length || 0;
+        // Contar fotos totales
+        const totalPhotos = albums.reduce((sum, album) => sum + (album.fotos?.length || 0), 0);
+        $('stat-photos').textContent = totalPhotos;
 
-            // Contar fotos totales
-            const totalPhotos = albums.reduce((sum, album) => sum + (album.fotos?.length || 0), 0);
-            $('stat-photos').textContent = totalPhotos;
-
-            // Última actualización
-            if (albums.length > 0) {
-                const lastDate = new Date(albums[0].fecha);
-                $('stat-date').textContent = lastDate.toLocaleDateString('es-SV');
-            }
+        // Última actualización
+        if (albums.length > 0) {
+            const lastDate = new Date(albums[0].fecha);
+            $('stat-date').textContent = lastDate.toLocaleDateString('es-SV');
         }
 
         // Cargar documentos
-        const docsRes = await fetch('/api/docs', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (docsRes.ok) {
-            const docs = await docsRes.json();
-            $('stat-docs').textContent = docs.length || 0;
-        }
+        const docs = await api.get('/api/docs');
+        $('stat-docs').textContent = docs.length || 0;
     } catch (err) {
         console.error('Error al cargar estadísticas:', err);
     }
@@ -163,9 +149,6 @@ $('album-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     resetMsgs($('form-error-album'), $('form-success-album'));
 
-    const token = localStorage.getItem('token');
-    if (!token) { window.location.href = 'login.html'; return; }
-
     const titulo = $('titulo').value.trim();
     const fecha = $('fecha').value;
     const descripcion = $('descripcion').value.trim();
@@ -186,57 +169,32 @@ $('album-form').addEventListener('submit', async (e) => {
     btn.disabled = true;
     btn.textContent = 'Subiendo…';
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/albums');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-
-    xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) {
-            const porc = Math.round((e.loaded / e.total) * 100);
+    try {
+        const response = await api.upload('/api/albums', formData, (porc) => {
             $('progress').value = porc;
             $('progress-text').textContent = `${porc}%`;
-        }
-    };
+        });
 
-    xhr.onload = () => {
+        const album = response.album;
+        showSuccess($('form-success-album'), `✅ Álbum "${album.titulo}" publicado con ${album.fotos.length} fotos.`);
+        $('album-form').reset();
+        $('preview').innerHTML = '';
+        $('progress').value = 0;
+        $('progress-text').textContent = '0%';
+        document.querySelector('#fotos + .file-input-label').textContent = 'Haz clic para seleccionar archivos';
+        loadStats();
+    } catch (err) {
+        showError($('form-error-album'), '❌ ' + err.message);
+    } finally {
         btn.disabled = false;
         btn.textContent = 'Publicar álbum';
-
-        if (xhr.status === 201) {
-            const album = JSON.parse(xhr.responseText).album;
-            showSuccess($('form-success-album'), `✅ Álbum "${album.titulo}" publicado con ${album.fotos.length} fotos.`);
-            $('album-form').reset();
-            $('preview').innerHTML = '';
-            $('progress').value = 0;
-            $('progress-text').textContent = '0%';
-
-            // Actualizar label del input
-            document.querySelector('#fotos + .file-input-label').textContent = 'Haz clic para seleccionar archivos';
-
-            // Recargar estadísticas
-            loadStats();
-        } else {
-            const err = JSON.parse(xhr.responseText).error || 'Error al publicar';
-            showError($('form-error-album'), '❌ ' + err);
-        }
-    };
-
-    xhr.onerror = () => {
-        btn.disabled = false;
-        btn.textContent = 'Publicar álbum';
-        showError($('form-error-album'), '❌ Falló la conexión');
-    };
-
-    xhr.send(formData);
+    }
 });
 
 // ---------- SUBIR PDF ----------
 $('doc-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     resetMsgs($('form-error-doc'), $('form-success-doc'));
-
-    const token = localStorage.getItem('token');
-    if (!token) { window.location.href = 'login.html'; return; }
 
     const titulo = $('doc-titulo').value.trim();
     const mes = $('doc-mes').value;
@@ -261,46 +219,24 @@ $('doc-form').addEventListener('submit', async (e) => {
     btn.disabled = true;
     btn.textContent = 'Subiendo…';
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/docs');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-
-    xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) {
-            const porc = Math.round((e.loaded / e.total) * 100);
+    try {
+        await api.upload('/api/docs', formData, (porc) => {
             $('progress-doc').value = porc;
             $('progress-text-doc').textContent = `${porc}%`;
-        }
-    };
+        });
 
-    xhr.onload = () => {
+        showSuccess($('form-success-doc'), `✅ PDF "${titulo}" subido correctamente.`);
+        $('doc-form').reset();
+        $('progress-doc').value = 0;
+        $('progress-text-doc').textContent = '0%';
+        document.querySelector('#doc-file + .file-input-label').textContent = 'Haz clic para seleccionar archivo PDF';
+        loadStats();
+    } catch (err) {
+        showError($('form-error-doc'), '❌ ' + err.message);
+    } finally {
         btn.disabled = false;
         btn.textContent = 'Subir documento';
-
-        if (xhr.status === 200) {
-            showSuccess($('form-success-doc'), `✅ PDF "${titulo}" subido correctamente.`);
-            $('doc-form').reset();
-            $('progress-doc').value = 0;
-            $('progress-text-doc').textContent = '0%';
-
-            // Actualizar label del input
-            document.querySelector('#doc-file + .file-input-label').textContent = 'Haz clic para seleccionar archivo PDF';
-
-            // Recargar estadísticas
-            loadStats();
-        } else {
-            const err = JSON.parse(xhr.responseText).error || 'Error al subir';
-            showError($('form-error-doc'), '❌ ' + err);
-        }
-    };
-
-    xhr.onerror = () => {
-        btn.disabled = false;
-        btn.textContent = 'Subir documento';
-        showError($('form-error-doc'), '❌ Falló la conexión');
-    };
-
-    xhr.send(formData);
+    }
 });
 
 // ---------- MODAL REUTILIZABLE ----------
@@ -373,14 +309,7 @@ $('btn-logout').addEventListener('click', () => {
 async function loadAlbumsList() {
     const container = $('albums-list');
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/albums', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (!response.ok) throw new Error('Error al cargar álbumes');
-
-        const albums = await response.json();
+        const albums = await api.get('/api/albums');
 
         if (albums.length === 0) {
             container.innerHTML = '<p class="empty-list">No hay álbumes publicados.</p>';
@@ -436,14 +365,7 @@ async function loadAlbumsList() {
 async function loadDocsList() {
     const container = $('docs-list');
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/docs', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (!response.ok) throw new Error('Error al cargar documentos');
-
-        const docs = await response.json();
+        const docs = await api.get('/api/docs');
 
         if (docs.length === 0) {
             container.innerHTML = '<p class="empty-list">No hay documentos publicados.</p>';
@@ -499,15 +421,7 @@ async function loadDocsList() {
 // Eliminar álbum
 async function deleteAlbum(albumId) {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`/api/albums/${albumId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (!response.ok) throw new Error('Error al eliminar álbum');
-
-        // Recargar lista
+        await api.delete(`/api/albums/${albumId}`);
         loadAlbumsList();
         loadStats();
     } catch (error) {
@@ -519,15 +433,7 @@ async function deleteAlbum(albumId) {
 // Eliminar documento
 async function deleteDocument(docId) {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`/api/docs/${docId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (!response.ok) throw new Error('Error al eliminar documento');
-
-        // Recargar lista
+        await api.delete(`/api/docs/${docId}`);
         loadDocsList();
         loadStats();
     } catch (error) {
