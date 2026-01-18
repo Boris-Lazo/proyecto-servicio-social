@@ -3,35 +3,29 @@ const path = require('path');
 
 /**
  * Servicio de almacenamiento
- * Abstrae operaciones del sistema de archivos para facilitar migración a S3/Cloud Storage
  */
 class StorageService {
-    constructor() {
-        this.baseUploadPath = path.join(__dirname, '..', '..', 'upload');
-        this.albumsPath = path.join(this.baseUploadPath, 'albums');
-        this.docsPath = path.join(this.baseUploadPath, 'docs');
-        this.tempAlbumsPath = path.join(this.baseUploadPath, 'temp_albums');
+    /**
+     * @param {Object} paths - Rutas de appConfig
+     */
+    constructor(paths) {
+        this.paths = paths;
     }
 
     /**
      * Crea una carpeta para un álbum
-     * @param {string} folderName - Nombre de la carpeta
-     * @returns {string} Path completo de la carpeta creada
      */
     createAlbumFolder(folderName) {
-        const folderPath = path.join(this.albumsPath, folderName);
+        const folderPath = path.join(this.paths.albums, folderName);
         fs.mkdirSync(folderPath, { recursive: true });
         return folderPath;
     }
 
     /**
-     * Guarda archivos de álbum (mueve de temporal a destino final)
-     * @param {Array} files - Array de archivos de multer
-     * @param {string} folderName - Nombre de la carpeta de destino
-     * @returns {Array<string>} Array de nombres de archivo
+     * Guarda archivos de álbum
      */
     saveAlbumFiles(files, folderName) {
-        const targetFolder = path.join(this.albumsPath, folderName);
+        const targetFolder = path.join(this.paths.albums, folderName);
         const savedFiles = [];
 
         files.forEach((file) => {
@@ -45,11 +39,10 @@ class StorageService {
     }
 
     /**
-     * Elimina un álbum completo (carpeta y archivos)
-     * @param {string} albumId - ID del álbum (nombre de carpeta)
+     * Elimina un álbum completo
      */
     deleteAlbum(albumId) {
-        const albumPath = path.join(this.albumsPath, albumId);
+        const albumPath = path.join(this.paths.albums, albumId);
         if (fs.existsSync(albumPath)) {
             fs.rmSync(albumPath, { recursive: true, force: true });
         }
@@ -57,10 +50,9 @@ class StorageService {
 
     /**
      * Elimina un archivo de documento
-     * @param {string} filename - Nombre del archivo
      */
     deleteDocument(filename) {
-        const docPath = path.join(this.docsPath, filename);
+        const docPath = path.join(this.paths.docs, filename);
         if (fs.existsSync(docPath)) {
             fs.unlinkSync(docPath);
         }
@@ -68,7 +60,6 @@ class StorageService {
 
     /**
      * Limpia archivos temporales
-     * @param {Array} files - Array de archivos de multer
      */
     cleanupTempFiles(files) {
         if (!files) return;
@@ -82,7 +73,6 @@ class StorageService {
 
     /**
      * Elimina una carpeta si existe
-     * @param {string} folderPath - Path de la carpeta
      */
     deleteFolder(folderPath) {
         if (fs.existsSync(folderPath)) {
@@ -92,12 +82,10 @@ class StorageService {
 
     /**
      * Verifica si un archivo existe
-     * @param {string} filePath - Path del archivo
-     * @returns {boolean}
      */
     fileExists(filePath) {
         return fs.existsSync(filePath);
     }
 }
 
-module.exports = new StorageService();
+module.exports = StorageService;

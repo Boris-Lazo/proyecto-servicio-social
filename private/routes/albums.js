@@ -1,20 +1,19 @@
 const express = require('express');
-const AlbumController = require('../controllers/AlbumController');
+const { albumController } = require('../container');
 const auth = require('../middleware/auth');
 const { uploadAlbum } = require('../config/multer');
 
 const router = express.Router();
 
-// Rutas de álbumes
 router.post(
     '/',
     auth,
     uploadAlbum.array('fotos', 30),
-    AlbumController.createAlbum.bind(AlbumController)
+    (req, res, next) => albumController.createAlbum(req, res, next)
 );
 
-router.get('/', AlbumController.listAlbums.bind(AlbumController));
+router.get('/', (req, res, next) => albumController.listAlbums(req, res, next));
 
-router.delete('/:id', auth, AlbumController.deleteAlbum.bind(AlbumController));
+router.delete('/:id', auth, (req, res, next) => albumController.deleteAlbum(req, res, next));
 
 module.exports = router;
