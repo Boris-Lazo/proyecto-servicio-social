@@ -1,126 +1,142 @@
-// lightbox.js - Lógica compartida para el visor de imágenes
+// lightbox.js - Lógica compartida para el visor de imágenes (Lightbox)
 
-// Variables Globales (o módulo si usáramos módulos ES6, pero usaremos global para simplicidad)
-let _lightbox_currentAlbum = null;
-let _lightbox_currentIndex = 0;
+// Variables Globales para el estado del visor
+let _visor_albumActual = null;
+let _visor_indiceActual = 0;
 
-// Elementos DOM (se inicializan al llamar openLightbox por si se cargan dinámicamente)
-let _el_lightbox = null;
-let _el_image = null;
-let _el_counter = null;
+// Elementos del DOM
+let _el_visor = null;
+let _el_imagen = null;
+let _el_contador = null;
 let _el_info = null;
-let _el_sidebar = null; // Container de thumbnails
+let _el_barraLateral = null; // Contenedor de miniaturas
 
-function initLightboxElements() {
-    _el_lightbox = document.getElementById('lightbox');
-    _el_image = document.getElementById('lightbox-image');
-    _el_counter = document.getElementById('lightbox-counter');
+/**
+ * Inicializa los elementos del DOM y los eventos del visor
+ */
+function inicializarElementosVisor() {
+    _el_visor = document.getElementById('lightbox');
+    _el_imagen = document.getElementById('lightbox-image');
+    _el_contador = document.getElementById('lightbox-counter');
     _el_info = document.getElementById('lightbox-info');
-    _el_sidebar = document.querySelector('.lightbox-sidebar');
+    _el_barraLateral = document.querySelector('.lightbox-sidebar');
 
-    // Event listeners globales (solo una vez)
-    if (_el_lightbox && !_el_lightbox.dataset.initialized) {
-        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-        document.getElementById('lightbox-prev').addEventListener('click', showPreviousPhoto);
-        document.getElementById('lightbox-next').addEventListener('click', showNextPhoto);
+    // Configurar eventos globales (solo una vez)
+    if (_el_visor && !_el_visor.dataset.inicializado) {
+        document.getElementById('lightbox-close').addEventListener('click', cerrarVisor);
+        document.getElementById('lightbox-prev').addEventListener('click', mostrarFotoAnterior);
+        document.getElementById('lightbox-next').addEventListener('click', mostrarSiguienteFoto);
 
-        // Cerrar con Escape y navegar con flechas
-        document.addEventListener('keydown', (e) => {
-            if (!_el_lightbox.classList.contains('active')) return;
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') showPreviousPhoto();
-            if (e.key === 'ArrowRight') showNextPhoto();
+        // Soporte para navegación con teclado
+        document.addEventListener('keydown', (evento) => {
+            if (!_el_visor.classList.contains('active')) return;
+            if (evento.key === 'Escape') cerrarVisor();
+            if (evento.key === 'ArrowLeft') mostrarFotoAnterior();
+            if (evento.key === 'ArrowRight') mostrarSiguienteFoto();
         });
 
-        _el_lightbox.dataset.initialized = 'true';
+        _el_visor.dataset.inicializado = 'true';
     }
 }
 
-window.openLightbox = function (album, index) {
-    _lightbox_currentAlbum = album;
-    _lightbox_currentIndex = index;
+/**
+ * Abre el visor de imágenes con un álbum y una imagen específica
+ * @param {Object} album - Datos del álbum
+ * @param {number} indice - Índice de la imagen a mostrar
+ */
+window.openLightbox = function (album, indice) {
+    _visor_albumActual = album;
+    _visor_indiceActual = indice;
 
-    initLightboxElements();
+    inicializarElementosVisor();
 
-    if (!_el_lightbox) {
-        console.error('Lightbox HTML structure not found in DOM');
+    if (!_el_visor) {
+        console.error('La estructura HTML del visor (lightbox) no fue encontrada en el DOM.');
         return;
     }
 
-    updateLightboxContent();
-    _el_lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Bloquear scroll
+    actualizarContenidoVisor();
+    _el_visor.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Bloquear desplazamiento de la página
 };
 
-window.closeLightbox = function () {
-    if (_el_lightbox) _el_lightbox.classList.remove('active');
+/**
+ * Cierra el visor de imágenes
+ */
+window.cerrarVisor = function () {
+    if (_el_visor) _el_visor.classList.remove('active');
     document.body.style.overflow = '';
-    _lightbox_currentAlbum = null;
+    _visor_albumActual = null;
 };
 
-function updateLightboxContent() {
-    if (!_lightbox_currentAlbum) return;
+/**
+ * Actualiza la imagen y la información mostrada en el visor
+ */
+function actualizarContenidoVisor() {
+    if (!_visor_albumActual) return;
 
-    const foto = _lightbox_currentAlbum.fotos[_lightbox_currentIndex];
-    const imageUrl = `/api/uploads/${_lightbox_currentAlbum.id}/${foto}`;
+    const foto = _visor_albumActual.fotos[_visor_indiceActual];
+    const urlImagen = `/api/uploads/${_visor_albumActual.id}/${foto}`;
 
-    // 1. Imagen Principal
-    _el_image.style.opacity = '0.5'; // Efecto de transición simple
+    // 1. Cargar la imagen principal con un efecto suave
+    _el_imagen.style.opacity = '0.5';
     setTimeout(() => {
-        _el_image.src = imageUrl;
-        _el_image.style.opacity = '1';
+        _el_imagen.src = urlImagen;
+        _el_imagen.style.opacity = '1';
     }, 150);
 
-    // 2. Info y Contador
-    const total = _lightbox_currentAlbum.fotos.length;
-    if (_el_counter) _el_counter.textContent = `${_lightbox_currentIndex + 1} / ${total}`;
+    // 2. Actualizar contador e información del álbum
+    const total = _visor_albumActual.fotos.length;
+    if (_el_contador) _el_contador.textContent = `${_visor_indiceActual + 1} / ${total}`;
 
     if (_el_info) {
-        const date = new Date(_lightbox_currentAlbum.fecha).toLocaleDateString();
+        const fecha = new Date(_visor_albumActual.fecha).toLocaleDateString();
         _el_info.innerHTML = `
-            <h3>${sanitizeHTML(_lightbox_currentAlbum.titulo)}</h3>
-            <p>📅 ${date} • 📸 Foto ${_lightbox_currentIndex + 1} de ${total}</p>
+            <h3>${sanitizeHTML(_visor_albumActual.titulo)}</h3>
+            <p>📅 ${fecha} • 📸 Foto ${_visor_indiceActual + 1} de ${total}</p>
         `;
     }
 
-    // 3. Renderizar Sidebar de Thumbnails
-    renderThumbnails();
+    // 3. Renderizar la barra lateral de miniaturas
+    renderizarMiniaturas();
 }
 
-function renderThumbnails() {
-    if (!_el_sidebar) return;
+/**
+ * Dibuja las miniaturas de todas las fotos del álbum en la barra lateral
+ */
+function renderizarMiniaturas() {
+    if (!_el_barraLateral) return;
 
-    // Limpiar y regenerar solo si cambió el álbum o si está vacío
-    // (Optimizacion: Si ya tiene los hijos correctos, solo actualizar clase 'active')
-    const currentThumbsId = _el_sidebar.dataset.albumId;
+    // Verificar si necesitamos regenerar las miniaturas (si cambió el álbum)
+    const idAlbumActual = _el_barraLateral.dataset.albumId;
 
-    if (currentThumbsId !== _lightbox_currentAlbum.id) {
-        _el_sidebar.innerHTML = '';
-        _el_sidebar.dataset.albumId = _lightbox_currentAlbum.id;
+    if (idAlbumActual !== _visor_albumActual.id) {
+        _el_barraLateral.innerHTML = '';
+        _el_barraLateral.dataset.albumId = _visor_albumActual.id;
 
-        _lightbox_currentAlbum.fotos.forEach((foto, idx) => {
+        _visor_albumActual.fotos.forEach((foto, indice) => {
             const img = document.createElement('img');
-            img.src = `/api/uploads/${_lightbox_currentAlbum.id}/${foto}`;
+            img.src = `/api/uploads/${_visor_albumActual.id}/${foto}`;
             img.loading = 'lazy';
 
             const div = document.createElement('div');
             div.className = 'lightbox-thumb';
             div.appendChild(img);
 
-            div.onclick = (e) => {
-                e.stopPropagation();
-                _lightbox_currentIndex = idx;
-                updateLightboxContent();
+            div.onclick = (evento) => {
+                evento.stopPropagation();
+                _visor_indiceActual = indice;
+                actualizarContenidoVisor();
             };
 
-            _el_sidebar.appendChild(div);
+            _el_barraLateral.appendChild(div);
         });
     }
 
-    // Actualizar estado Active
-    const thumbs = Array.from(_el_sidebar.children);
-    thumbs.forEach((t, i) => {
-        if (i === _lightbox_currentIndex) {
+    // Resaltar la miniatura de la foto actual
+    const miniaturas = Array.from(_el_barraLateral.children);
+    miniaturas.forEach((t, i) => {
+        if (i === _visor_indiceActual) {
             t.classList.add('active');
             t.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
@@ -129,25 +145,33 @@ function renderThumbnails() {
     });
 }
 
-function showNextPhoto() {
-    if (!_lightbox_currentAlbum) return;
-    if (_lightbox_currentIndex < _lightbox_currentAlbum.fotos.length - 1) {
-        _lightbox_currentIndex++;
-        updateLightboxContent();
+/**
+ * Navega a la siguiente fotografía
+ */
+function mostrarSiguienteFoto() {
+    if (!_visor_albumActual) return;
+    if (_visor_indiceActual < _visor_albumActual.fotos.length - 1) {
+        _visor_indiceActual++;
+        actualizarContenidoVisor();
     }
 }
 
-function showPreviousPhoto() {
-    if (_lightbox_currentIndex > 0) {
-        _lightbox_currentIndex--;
-        updateLightboxContent();
+/**
+ * Navega a la fotografía anterior
+ */
+function mostrarFotoAnterior() {
+    if (_visor_indiceActual > 0) {
+        _visor_indiceActual--;
+        actualizarContenidoVisor();
     }
 }
 
-// Helper simple para evitar XSS básico si no existe
-function sanitizeHTML(str) {
-    if (!str) return '';
+/**
+ * Utilidad básica para sanitizar cadenas de texto (si no está disponible globalmente)
+ */
+function sanitizeHTML(cadena) {
+    if (!cadena) return '';
     const temp = document.createElement('div');
-    temp.textContent = str;
+    temp.textContent = cadena;
     return temp.innerHTML;
 }
