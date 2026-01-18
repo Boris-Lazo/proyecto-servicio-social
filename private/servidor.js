@@ -25,10 +25,13 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
         app.use(cors(opcionesCors));
         app.use(express.json());
 
-        // Servir archivos estáticos desde la carpeta public
-        app.use(express.static(path.join(__dirname, '..', 'public')));
+        // En producción (Docker), Nginx sirve los archivos estáticos.
+        // Solo los servimos aquí si no estamos en producción o si se desea redundancia.
+        if (process.env.NODE_ENV !== 'production') {
+            app.use(express.static(path.join(__dirname, '..', 'public')));
+        }
 
-        // Servir fotos de álbumes y documentos
+        // Servir fotos de álbumes y documentos (necesario para que la API entregue los archivos)
         app.use('/api/uploads', express.static(configuracionApp.rutas.albumes));
         app.use('/api/docs/file', express.static(configuracionApp.rutas.documentos));
 
@@ -53,8 +56,8 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
 
         // Arrancar servidor
         const PUERTO = configuracionApp.puerto;
-        const servidor = app.listen(PUERTO, () =>
-            console.log(`✅ Backend con arquitectura SOLID en http://localhost:${PUERTO}`)
+        const servidor = app.listen(PUERTO, '0.0.0.0', () =>
+            console.log(`✅ Backend con arquitectura SOLID escuchando en 0.0.0.0:${PUERTO}`)
         );
 
         // Cierre graceful

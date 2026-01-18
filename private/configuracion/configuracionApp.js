@@ -8,6 +8,7 @@ const configuracionApp = {
     secretoJwt: process.env.JWT_SECRET || 'tu_secreto_super_seguro_cambiar_esto',
 
     // Rutas de almacenamiento
+    // Cuando se corre en Docker, estas rutas deben ser relativas al directorio raíz de la app en el contenedor (/app)
     rutas: {
         baseSubida: path.join(__dirname, '..', 'upload'),
         albumes: path.join(__dirname, '..', 'upload', 'albums'),

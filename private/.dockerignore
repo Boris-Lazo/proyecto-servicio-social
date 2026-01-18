@@ -1,0 +1,6 @@
+node_modules
+npm-debug.log
+error.log
+.env
+base_de_datos/*.sqlite
+upload/*

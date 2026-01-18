@@ -1,0 +1,49 @@
+services:
+  # Servicio de Backend (Node.js)
+  backend:
+    build:
+      context: ./private
+      dockerfile: Dockerfile
+    container_name: escuela_backend
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - JWT_SECRET=${JWT_SECRET:-tu_secreto_super_seguro}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      - USER_DIRECTORA_PASS=${USER_DIRECTORA_PASS}
+      - USER_SUBDIRECTORA_PASS=${USER_SUBDIRECTORA_PASS}
+      - USER_DEV_PASS=${USER_DEV_PASS}
+    volumes:
+      # Persistencia para la base de datos
+      - ./private/base_de_datos:/app/base_de_datos
+      # Persistencia para las subidas de archivos
+      - ./private/upload:/app/upload
+    networks:
+      - escuela_network
+
+  # Servicio de Frontend (Nginx)
+  frontend:
+    image: nginx:stable-alpine
+    container_name: escuela_frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      # Servir los archivos estáticos
+      - ./public:/usr/share/nginx/html:ro
+      # Configuración de Nginx
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - escuela_network
+
+networks:
+  escuela_network:
+    driver: bridge
