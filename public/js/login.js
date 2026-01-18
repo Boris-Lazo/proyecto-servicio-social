@@ -10,7 +10,7 @@ $('show-password').addEventListener('change', (e) => {
 });
 
 // ---------- LOGIN ----------
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+$('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = $('user').value.trim();
@@ -22,23 +22,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     }
 
     try {
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: email, password })
-        });
-
-        // Verificar si la respuesta tiene contenido
-        const text = await res.text();
-        if (!text) {
-            throw new Error('El servidor no respondió correctamente');
-        }
-
-        const data = JSON.parse(text);
-
-        if (!res.ok) {
-            throw new Error(data.error || 'Credenciales incorrectas');
-        }
+        const data = await api.post('/api/login', { user: email, password });
 
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', email);

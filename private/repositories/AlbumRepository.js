@@ -30,7 +30,7 @@ class AlbumRepository extends BaseRepository {
         // Parsear el JSON de fotos
         return albums.map((album) => ({
             ...album,
-            fotos: JSON.parse(album.fotos),
+            fotos: album.fotos ? JSON.parse(album.fotos) : [],
         }));
     }
 
@@ -41,7 +41,7 @@ class AlbumRepository extends BaseRepository {
      */
     async findById(id) {
         const album = await this.get('SELECT * FROM albums WHERE id = ?', [id]);
-        if (album) {
+        if (album && album.fotos) {
             album.fotos = JSON.parse(album.fotos);
         }
         return album;

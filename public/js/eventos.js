@@ -10,14 +10,7 @@ const albumsContainer = document.getElementById('albums-container');
 async function loadAlbums() {
     try {
         albumsContainer.innerHTML = '<div class="loading-message">Cargando eventos...</div>';
-
-        const response = await fetch('/api/albums');
-
-        if (!response.ok) {
-            throw new Error('Error al cargar álbumes');
-        }
-
-        albums = await response.json();
+        albums = await api.get('/api/albums');
 
         if (albums.length === 0) {
             albumsContainer.innerHTML = '<div class="empty-message">No hay eventos publicados aún.<br>Vuelve pronto para ver las fotos de nuestros eventos.</div>';

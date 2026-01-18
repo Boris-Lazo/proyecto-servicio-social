@@ -10,14 +10,7 @@ const docsContainer = document.getElementById('documentos-container');
 async function loadDocuments() {
     try {
         docsContainer.innerHTML = '<div class="loading-message">Cargando documentos...</div>';
-
-        const response = await fetch('/api/docs');
-
-        if (!response.ok) {
-            throw new Error('Error al cargar documentos');
-        }
-
-        documents = await response.json();
+        documents = await api.get('/api/docs');
 
         if (documents.length === 0) {
             docsContainer.innerHTML = '<div class="empty-message">No hay documentos publicados aún.<br>Vuelve pronto para consultar los documentos de rendición de cuentas.</div>';

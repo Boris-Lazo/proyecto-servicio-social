@@ -1,14 +1,13 @@
-const sqlite = require('sqlite3').verbose();
-const path = require('path');
-
 /**
  * Clase base para repositorios
- * Proporciona conexión compartida a la base de datos y métodos auxiliares
+ * Proporciona métodos auxiliares para consultas SQL usando una instancia de DB inyectada
  */
 class BaseRepository {
-    constructor() {
-        const dbPath = path.join(__dirname, '..', 'db', 'escuela.sqlite');
-        this.db = new sqlite.Database(dbPath);
+    /**
+     * @param {Object} db - Instancia de la base de datos (sqlite3)
+     */
+    constructor(db) {
+        this.db = db;
     }
 
     /**
@@ -56,19 +55,6 @@ class BaseRepository {
                         lastID: this.lastID,
                         changes: this.changes,
                     });
-            });
-        });
-    }
-
-    /**
-     * Cierra la conexión a la base de datos
-     * @returns {Promise<void>}
-     */
-    close() {
-        return new Promise((resolve, reject) => {
-            this.db.close((err) => {
-                if (err) reject(err);
-                else resolve();
             });
         });
     }
