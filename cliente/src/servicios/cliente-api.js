@@ -1,3 +1,5 @@
+import enrutador from '../enrutador/indice';
+
 /**
  * Cliente de API centralizado para el frontend Vue.
  * Gestiona la autenticación, los encabezados y los errores de forma consistente.
@@ -14,7 +16,7 @@ const clienteApi = {
         if (respuesta.status === 401 && !puntoEntrada.includes('/login')) {
             localStorage.removeItem('token');
             localStorage.removeItem('usuario');
-            window.location.href = '/login';
+            enrutador.push('/login');
             return;
         }
 

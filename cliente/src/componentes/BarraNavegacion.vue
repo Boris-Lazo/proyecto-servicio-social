@@ -12,12 +12,12 @@ onMounted(() => {
 onUnmounted(() => window.removeEventListener('scroll', manejarDesplazamiento));
 </script>
 <template>
-  <nav class="navBar" :class="{ 'scrolled': desplazado }" id="header-top" aria-label="Principal">
+  <nav class="barra-navegacion" :class="{ 'desplazado': desplazado }" id="header-top" aria-label="Principal">
     <div class="escuela-titulo"><h1>CENTRO ESCOLAR "CANTÓN EL AMATAL"</h1></div>
-    <button class="menu-toggle" :aria-expanded="menuExpandido" @click="conmutarMenu">
-      <span class="sr-only">Abrir menú</span>☰
+    <button class="alternar-menu" :aria-expanded="menuExpandido" @click="conmutarMenu">
+      <span class="solo-lectores">Abrir menú</span>☰
     </button>
-    <ul id="nav-menu" :class="{ 'show': menuExpandido }">
+    <ul id="menu-navegacion" :class="{ 'show': menuExpandido }">
       <li><router-link to="/" @click="cerrarMenu">Inicio</router-link></li>
       <li><router-link to="/eventos" @click="cerrarMenu">Eventos</router-link></li>
       <li><router-link to="/documentos" @click="cerrarMenu">Documentos</router-link></li>

@@ -3,7 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../servicios/cliente-api';
 
-// Importar estilos específicos de la vista
+// Importar estilos específicos de la vista-fondo
 import '../activos/css/admin.css';
 
 const enrutador = useRouter();
@@ -77,12 +77,9 @@ const verificarAutenticacion = () => {
   }
 
   usuarioActual.value = usuario;
-  const nombresUsuarios = {
-    'directora@amatal.edu.sv': 'Directora',
-    'ericka.flores@clases.edu.sv': 'Subdirectora',
-    'borisstanleylazocastillo@gmail.com': 'Desarrollador'
-  };
-  nombreRol.value = nombresUsuarios[usuario] || usuario;
+  // Extraer nombre del correo (antes del @) y formatear
+  const nombreLimpio = usuario.split('@')[0].replace(/[\._]/g, ' ');
+  nombreRol.value = nombreLimpio.charAt(0).toUpperCase() + nombreLimpio.slice(1);
   return true;
 };
 
@@ -322,61 +319,61 @@ watch(pestañaActiva, (nueva) => {
 </script>
 
 <template>
-  <div class="admin-body-container">
+  <div class="admin-cuerpo-container">
     <!-- Barra superior -->
-    <header class="admin-topbar">
-      <div class="admin-topbar-content">
-        <div class="admin-brand">
+    <header class="admin-barra-superior">
+      <div class="admin-contenido-barra-superior">
+        <div class="admin-marca">
           <h1>📚 Panel de Administración</h1>
-          <p class="admin-user-info">Bienvenido, <span>{{ nombreRol }}</span></p>
+          <p class="admin-info-usuario">Bienvenido, <span>{{ nombreRol }}</span></p>
         </div>
 
         <!-- Botón hamburguesa (móvil) -->
         <button
-          class="admin-menu-toggle"
+          class="admin-alternar-menu"
           @click="menuExpandido = !menuExpandido"
           :aria-expanded="menuExpandido"
         >
-          <span class="sr-only">Abrir menú</span>☰
+          <span class="solo-lectores">Abrir menú</span>☰
         </button>
 
         <!-- Menú de navegación -->
-        <nav class="admin-actions" :class="{ 'show': menuExpandido }">
-          <button @click="cerrarSesion" class="btn-danger">🚪 Cerrar sesión</button>
+        <nav class="admin-acciones" :class="{ 'show': menuExpandido }">
+          <button @click="cerrarSesion" class="boton-peligro">🚪 Cerrar sesión</button>
         </nav>
       </div>
     </header>
 
     <!-- Contenido principal -->
-    <main class="admin-main">
+    <main class="admin-principal">
       <!-- Dashboard con estadísticas -->
-      <section class="admin-dashboard">
+      <section class="admin-tablero">
         <h2>Resumen General</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon">📸</div>
-            <div class="stat-info">
+        <div class="cuadricula-estadisticas">
+          <div class="tarjeta-estadistica">
+            <div class="icono-estadistica">📸</div>
+            <div class="info-estadistica">
               <h3>{{ estadisticas.albums }}</h3>
               <p>Álbumes publicados</p>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon">📄</div>
-            <div class="stat-info">
+          <div class="tarjeta-estadistica">
+            <div class="icono-estadistica">📄</div>
+            <div class="info-estadistica">
               <h3>{{ estadisticas.docs }}</h3>
               <p>Documentos subidos</p>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon">🖼️</div>
-            <div class="stat-info">
+          <div class="tarjeta-estadistica">
+            <div class="icono-estadistica">🖼️</div>
+            <div class="info-estadistica">
               <h3>{{ estadisticas.fotos }}</h3>
               <p>Fotos totales</p>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon">📅</div>
-            <div class="stat-info">
+          <div class="tarjeta-estadistica">
+            <div class="icono-estadistica">📅</div>
+            <div class="info-estadistica">
               <h3>{{ estadisticas.ultimaFecha }}</h3>
               <p>Última actualización</p>
             </div>
@@ -385,24 +382,24 @@ watch(pestañaActiva, (nueva) => {
       </section>
 
       <!-- Sistema de pestañas -->
-      <section class="admin-tabs-section">
-        <div class="tabs-header">
+      <section class="admin-seccion-pestanas">
+        <div class="cabecera-pestanas">
           <button
-            class="tab-btn"
+            class="boton-pestana"
             :class="{ active: pestañaActiva === 'albums' }"
             @click="pestañaActiva = 'albums'"
           >
             📸 Subir Álbum
           </button>
           <button
-            class="tab-btn"
+            class="boton-pestana"
             :class="{ active: pestañaActiva === 'documentos' }"
             @click="pestañaActiva = 'documentos'"
           >
             📄 Subir Documento
           </button>
           <button
-            class="tab-btn"
+            class="boton-pestana"
             :class="{ active: pestañaActiva === 'gestionar' }"
             @click="pestañaActiva = 'gestionar'"
           >
@@ -411,132 +408,132 @@ watch(pestañaActiva, (nueva) => {
         </div>
 
         <!-- Tab: Álbumes -->
-        <div class="tab-content" :class="{ active: pestañaActiva === 'albums' }">
-          <div class="admin-card">
+        <div class="contenido-pestana" :class="{ active: pestañaActiva === 'albums' }">
+          <div class="admin-tarjeta">
             <h3>📤 Publicar Nuevo Álbum</h3>
-            <form @submit.prevent="subirAlbum" class="admin-form">
-              <div class="form-row">
-                <div class="form-group">
+            <form @submit.prevent="subirAlbum" class="admin-formulario">
+              <div class="fila-formulario">
+                <div class="grupo-formulario">
                   <label for="titulo">Título del evento *</label>
                   <input type="text" id="titulo" v-model="formularioAlbum.titulo" placeholder="Ej: Feria de Ciencias 2025" required>
                 </div>
-                <div class="form-group">
+                <div class="grupo-formulario">
                   <label for="fecha">Fecha del evento *</label>
                   <input type="date" id="fecha" v-model="formularioAlbum.fecha" required>
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="grupo-formulario">
                 <label for="descripcion">Descripción (opcional)</label>
                 <textarea id="descripcion" v-model="formularioAlbum.descripcion" rows="3" placeholder="Breve reseña del evento"></textarea>
               </div>
 
-              <div class="form-group">
+              <div class="grupo-formulario">
                 <label for="fotos">Seleccionar fotos (máx. 30, solo JPG) *</label>
-                <div class="file-input-wrapper">
+                <div class="contenedor-entrada-archivo">
                   <input type="file" id="fotos" @change="manejarCambioFotos" accept="image/jpeg" multiple required>
-                  <span class="file-input-label">
+                  <span class="etiqueta-entrada-archivo">
                     {{ formularioAlbum.fotos.length > 0 ? `${formularioAlbum.fotos.length} archivo(s) seleccionado(s)` : 'Haz clic para seleccionar archivos' }}
                   </span>
                 </div>
               </div>
 
               <!-- Preview de fotos -->
-              <div class="preview-grid">
+              <div class="cuadricula-previsualizacion">
                 <img v-for="(src, index) in previewFotos" :key="index" :src="src" alt="preview">
               </div>
 
               <!-- Barra de progreso -->
-              <div class="progress-container" v-if="subiendoAlbum">
+              <div class="contenedor-progreso" v-if="subiendoAlbum">
                 <progress :value="progresoAlbum" max="100"></progress>
                 <span>{{ progresoAlbum }}%</span>
               </div>
 
-              <button type="submit" class="btn-primary" :disabled="subiendoAlbum">
+              <button type="submit" class="boton-primario" :disabled="subiendoAlbum">
                 {{ subiendoAlbum ? 'Subiendo…' : 'Publicar álbum' }}
               </button>
 
-              <p v-if="errorAlbum" class="error-msg" role="alert">{{ errorAlbum }}</p>
-              <p v-if="exitoAlbum" class="success-msg" role="status">{{ exitoAlbum }}</p>
+              <p v-if="errorAlbum" class="mensaje-error" role="alert">{{ errorAlbum }}</p>
+              <p v-if="exitoAlbum" class="mensaje-exito" role="status">{{ exitoAlbum }}</p>
             </form>
           </div>
         </div>
 
         <!-- Tab: Documentos -->
-        <div class="tab-content" :class="{ active: pestañaActiva === 'documentos' }">
-          <div class="admin-card">
+        <div class="contenido-pestana" :class="{ active: pestañaActiva === 'documentos' }">
+          <div class="admin-tarjeta">
             <h3>📤 Subir Nuevo Documento</h3>
-            <form @submit.prevent="subirDocumento" class="admin-form">
-              <div class="form-row">
-                <div class="form-group">
+            <form @submit.prevent="subirDocumento" class="admin-formulario">
+              <div class="fila-formulario">
+                <div class="grupo-formulario">
                   <label for="doc-titulo">Título del documento *</label>
                   <input type="text" id="doc-titulo" v-model="formularioDoc.titulo" placeholder="Ej: Rendición de Cuentas - Junio 2025" required>
                 </div>
-                <div class="form-group">
+                <div class="grupo-formulario">
                   <label for="doc-mes">Mes del documento *</label>
                   <input type="month" id="doc-mes" v-model="formularioDoc.mes" required>
                 </div>
               </div>
 
-              <div class="form-group">
+              <div class="grupo-formulario">
                 <label for="doc-file">Seleccionar PDF (máx. 10 MB) *</label>
-                <div class="file-input-wrapper">
+                <div class="contenedor-entrada-archivo">
                   <input type="file" id="doc-file" @change="manejarCambioDoc" accept=".pdf" required>
-                  <span class="file-input-label">{{ nombreArchivoDoc }}</span>
+                  <span class="etiqueta-entrada-archivo">{{ nombreArchivoDoc }}</span>
                 </div>
-                <small class="form-hint">Tamaño máximo: 10 MB</small>
+                <small class="pista-formulario">Tamaño máximo: 10 MB</small>
               </div>
 
               <!-- Barra de progreso -->
-              <div class="progress-container" v-if="subiendoDoc">
+              <div class="contenedor-progreso" v-if="subiendoDoc">
                 <progress :value="progresoDoc" max="100"></progress>
                 <span>{{ progresoDoc }}%</span>
               </div>
 
-              <button type="submit" class="btn-primary" :disabled="subiendoDoc">
+              <button type="submit" class="boton-primario" :disabled="subiendoDoc">
                 {{ subiendoDoc ? 'Subiendo…' : 'Subir documento' }}
               </button>
 
-              <p v-if="errorDoc" class="error-msg" role="alert">{{ errorDoc }}</p>
-              <p v-if="exitoDoc" class="success-msg" role="status">{{ exitoDoc }}</p>
+              <p v-if="errorDoc" class="mensaje-error" role="alert">{{ errorDoc }}</p>
+              <p v-if="exitoDoc" class="mensaje-exito" role="status">{{ exitoDoc }}</p>
             </form>
           </div>
         </div>
 
         <!-- Tab: Gestionar Contenido -->
-        <div class="tab-content" :class="{ active: pestañaActiva === 'gestionar' }">
-          <div class="admin-card">
+        <div class="contenido-pestana" :class="{ active: pestañaActiva === 'gestionar' }">
+          <div class="admin-tarjeta">
             <h3>📸 Álbumes Publicados</h3>
-            <div class="content-list">
-              <p v-if="cargandoGestion" class="loading-content">Cargando álbumes...</p>
-              <p v-else-if="listaAlbums.length === 0" class="empty-list">No hay álbumes publicados.</p>
-              <div v-else v-for="album in listaAlbums" :key="album.id" class="content-item">
-                <div class="content-info">
+            <div class="lista-contenido">
+              <p v-if="cargandoGestion" class="cargando-contenido">Cargando álbumes...</p>
+              <p v-else-if="listaAlbums.length === 0" class="lista-vacia">No hay álbumes publicados.</p>
+              <div v-else v-for="album in listaAlbums" :key="album.id" class="item-contenido">
+                <div class="info-contenido">
                   <h4>{{ album.titulo }}</h4>
-                  <div class="content-meta">
+                  <div class="meta-contenido">
                     <span>📅 {{ new Date(album.fecha).toLocaleDateString('es-SV') }}</span>
                     <span>📸 {{ album.fotos.length }} fotos</span>
                   </div>
                 </div>
-                <button class="btn-delete" @click="confirmarEliminarAlbum(album)">🗑️ Eliminar</button>
+                <button class="boton-eliminar" @click="confirmarEliminarAlbum(album)">🗑️ Eliminar</button>
               </div>
             </div>
           </div>
 
-          <div class="admin-card">
+          <div class="admin-tarjeta">
             <h3>📄 Documentos Publicados</h3>
-            <div class="content-list">
-              <p v-if="cargandoGestion" class="loading-content">Cargando documentos...</p>
-              <p v-else-if="listaDocs.length === 0" class="empty-list">No hay documentos publicados.</p>
-              <div v-else v-for="doc in listaDocs" :key="doc.id" class="content-item">
-                <div class="content-info">
+            <div class="lista-contenido">
+              <p v-if="cargandoGestion" class="cargando-contenido">Cargando documentos...</p>
+              <p v-else-if="listaDocs.length === 0" class="lista-vacia">No hay documentos publicados.</p>
+              <div v-else v-for="doc in listaDocs" :key="doc.id" class="item-contenido">
+                <div class="info-contenido">
                   <h4>{{ doc.titulo }}</h4>
-                  <div class="content-meta">
+                  <div class="meta-contenido">
                     <span>📅 {{ obtenerNombreMes(doc.mes) }}</span>
                     <span>📄 PDF</span>
                   </div>
                 </div>
-                <button class="btn-delete" @click="confirmarEliminarDoc(doc)">🗑️ Eliminar</button>
+                <button class="boton-eliminar" @click="confirmarEliminarDoc(doc)">🗑️ Eliminar</button>
               </div>
             </div>
           </div>
@@ -545,18 +542,18 @@ watch(pestañaActiva, (nueva) => {
     </main>
 
     <!-- Modal de confirmación reutilizable -->
-    <div class="modal-overlay" :class="{ active: modalVisible }" @click.self="cerrarModal">
-      <div class="modal-container">
-        <div class="modal-header">
+    <div class="capa-modal" :class="{ active: modalVisible }" @click.self="cerrarModal">
+      <div class="contenedor-modal">
+        <div class="cabecera-modal">
           <h3>{{ modalDatos.titulo }}</h3>
         </div>
-        <div class="modal-body">
+        <div class="cuerpo-modal">
           <p>{{ modalDatos.mensaje }}</p>
-          <p class="modal-hint">{{ modalDatos.pista }}</p>
+          <p class="pista-modal">{{ modalDatos.pista }}</p>
         </div>
-        <div class="modal-footer">
-          <button @click="cerrarModal" class="btn-modal btn-modal-cancel">Cancelar</button>
-          <button @click="confirmarAccionModal" class="btn-modal btn-modal-confirm">{{ modalDatos.textoConfirmar }}</button>
+        <div class="pie-modal">
+          <button @click="cerrarModal" class="boton-modal boton-modal-cancelar">Cancelar</button>
+          <button @click="confirmarAccionModal" class="boton-modal boton-modal-confirmar">{{ modalDatos.textoConfirmar }}</button>
         </div>
       </div>
     </div>
@@ -564,7 +561,7 @@ watch(pestañaActiva, (nueva) => {
 </template>
 
 <style scoped>
-.admin-body-container {
+.admin-cuerpo-container {
   min-height: 100vh;
   background-color: #f4f7f6;
   width: 100%;

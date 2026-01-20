@@ -17,7 +17,7 @@
 
 /* Tarjeta de álbum */
 .album-card,
-.preview-card {
+.tarjeta-previsualizacion {
     background: white;
     border-radius: 12px;
     overflow: hidden;
@@ -28,7 +28,7 @@
 }
 
 .album-card:hover,
-.preview-card:hover {
+.tarjeta-previsualizacion:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 24px rgba(0, 59, 136, 0.2);
 }
@@ -91,7 +91,7 @@
 }
 
 .album-info,
-.preview-content {
+.contenido-previsualizacion {
     padding: 1.5rem;
     flex-grow: 1;
     display: flex;
@@ -99,7 +99,7 @@
 }
 
 .album-info h3,
-.preview-content h3 {
+.contenido-previsualizacion h3 {
     color: #003b88;
     margin-bottom: 0.5rem;
     font-size: 1.3rem;
@@ -107,7 +107,7 @@
 }
 
 .album-date,
-.preview-date {
+.fecha-previsualizacion {
     color: #666;
     font-size: 0.9rem;
     margin-bottom: 0.8rem;
@@ -117,12 +117,12 @@
 }
 
 .album-date::before,
-.preview-date::before {
+.fecha-previsualizacion::before {
     content: "📅";
 }
 
 .album-description,
-.preview-desc {
+.descripcion-previsualizacion {
     color: #555;
     font-size: 0.95rem;
     line-height: 1.6;

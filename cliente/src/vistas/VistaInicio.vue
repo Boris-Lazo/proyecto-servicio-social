@@ -15,8 +15,8 @@ onMounted(async () => {
 </script>
 <template>
   <header class="escuela-header">
-    <img class="vista" src="../activos/img/fondo-index.jpg" alt="Fondo">
-    <section class="escuela-info">
+    <img class="vista-fondo" src="../activos/img/fondo-index.jpg" alt="Fondo">
+    <section class="info-escuela">
       <p>BIENVENIDOS. <br>El Centro Escolar Cantón El Amatal es una institución educativa de El Salvador.</p>
     </section>
   </header>
@@ -29,16 +29,16 @@ onMounted(async () => {
         </div>
         <div class="album-info"><h3>{{ ultimoAlbum.titulo }}</h3></div>
       </div>
-      <router-link to="/eventos" class="btn-cta">Ver todos →</router-link>
+      <router-link to="/eventos" class="boton-llamada-accion">Ver todos →</router-link>
     </section>
     <section>
       <h2>📄 Documentos</h2>
       <div v-if="ultimoDoc">
-        <a :href="`/api/docs/file/${ultimoDoc.filename}`" target="_blank" class="documento-card-link-index">
-          <div class="documento-card-index"><h4>{{ ultimoDoc.titulo }}</h4></div>
+        <a :href="`/api/docs/file/${ultimoDoc.filename}`" target="_blank" class="enlace-tarjeta-documento-inicio">
+          <div class="tarjeta-documento-inicio"><h4>{{ ultimoDoc.titulo }}</h4></div>
         </a>
       </div>
-      <router-link to="/documentos" class="btn-cta">Ver todos →</router-link>
+      <router-link to="/documentos" class="boton-llamada-accion">Ver todos →</router-link>
     </section>
   </main>
 </template>

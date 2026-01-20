@@ -17,7 +17,7 @@ const manejarEnvio = async () => {
 </script>
 <template>
   <header class="escuela-header">
-    <img class="vista" src="../activos/img/fondo-index.jpg">
+    <img class="vista-fondo" src="../activos/img/fondo-index.jpg">
     <section class="login">
       <h2>Iniciar sesión</h2>
       <form @submit.prevent="manejarEnvio">

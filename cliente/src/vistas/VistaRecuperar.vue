@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../servicios/cliente-api';
 
-// Importar estilos específicos de la vista
+// Importar estilos específicos de la vista-fondo
 import '../activos/css/recuperar.css';
 
 const enrutador = useRouter();
@@ -27,18 +27,18 @@ const solicitarEnlace = async () => {
 
   if (!correo.value.trim()) {
     mensajePaso1.value = 'Por favor ingresa tu correo electrónico';
-    tipoMensajePaso1.value = 'error-msg';
+    tipoMensajePaso1.value = 'mensaje-error';
     return;
   }
 
   try {
     await api.enviar('/api/recover', { correo: correo.value.trim() });
     mensajePaso1.value = 'Correo enviado. Revisa tu bandeja de entrada e ingresa el código.';
-    tipoMensajePaso1.value = 'success-msg';
+    tipoMensajePaso1.value = 'mensaje-exito';
     mostrarDetallesToken.value = true;
   } catch (err) {
     mensajePaso1.value = err.message;
-    tipoMensajePaso1.value = 'error-msg';
+    tipoMensajePaso1.value = 'mensaje-error';
   }
 };
 
@@ -48,7 +48,7 @@ const cambiarContrasena = async () => {
 
   if (!token.value.trim() || !nuevaClave.value || nuevaClave.value.length < 6) {
     mensajePaso2.value = 'Ingresa el código y la nueva contraseña (mín. 6 caracteres)';
-    tipoMensajePaso2.value = 'error-msg';
+    tipoMensajePaso2.value = 'mensaje-error';
     return;
   }
 
@@ -59,11 +59,11 @@ const cambiarContrasena = async () => {
     });
 
     mensajePaso2.value = 'Contraseña actualizada. Redirigiendo...';
-    tipoMensajePaso2.value = 'success-msg';
+    tipoMensajePaso2.value = 'mensaje-exito';
     setTimeout(() => enrutador.push('/login'), 2000);
   } catch (err) {
     mensajePaso2.value = err.message;
-    tipoMensajePaso2.value = 'error-msg';
+    tipoMensajePaso2.value = 'mensaje-error';
   }
 };
 </script>
@@ -142,11 +142,11 @@ const cambiarContrasena = async () => {
 
 <style scoped>
 /* Estilos adicionales si son necesarios */
-.error-msg {
+.mensaje-error {
   color: #dc3545;
   margin-top: 0.5rem;
 }
-.success-msg {
+.mensaje-exito {
   color: #28a745;
   margin-top: 0.5rem;
 }

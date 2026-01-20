@@ -1,16 +1,16 @@
 /* ===== AJUSTES DE HEADER PARA EVENTOS ===== */
-/* Solo aplica en la página de eventos donde queremos ocultar la vista principal */
+/* Solo aplica en la página de eventos donde queremos ocultar la vista-fondo principal */
 body .escuela-header {
     min-height: auto;
     background: transparent;
     overflow: visible;
 }
 
-.escuela-header .vista {
+.escuela-header .vista-fondo {
     display: none;
 }
 
-#header-top.navBar {
+#header-top.barra-navegacion {
     position: fixed;
     top: 0;
     left: 0;

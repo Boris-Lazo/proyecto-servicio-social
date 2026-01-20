@@ -5,8 +5,8 @@ import PiePagina from './componentes/PiePagina.vue';
 import VisualizadorImagen from './componentes/VisualizadorImagen.vue';
 
 // Importar estilos globales
-import './activos/css/style.css';
-import './activos/css/gallery.css';
+import './activos/css/galeria.css';
+import './activos/css/estilos.css';
 
 const visorEstado = ref({
   mostrar: false,

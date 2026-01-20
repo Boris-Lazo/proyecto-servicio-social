@@ -2,6 +2,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const multer = require('multer');
 
 // Importar contenedor de dependencias
@@ -22,6 +23,14 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
             origin: configuracionApp.origenCors,
             optionsSuccessStatus: 200,
         };
+        app.use(helmet({
+            contentSecurityPolicy: {
+                directives: {
+                    ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+                    "img-src": ["'self'", "data:", "blob:", "http://localhost:*", "https://*"],
+                },
+            },
+        }));
         app.use(cors(opcionesCors));
         app.use(express.json());
 

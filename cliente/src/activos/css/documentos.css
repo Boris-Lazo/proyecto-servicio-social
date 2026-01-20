@@ -8,12 +8,12 @@ body .escuela-header {
 }
 
 /* Ocultar imagen de fondo en esta página */
-.escuela-header .vista {
+.escuela-header .vista-fondo {
     display: none;
 }
 
 /* Navegación fija y sin transparencia */
-#header-top.navBar {
+#header-top.barra-navegacion {
     position: fixed;
     top: 0;
     left: 0;
@@ -194,7 +194,7 @@ html body {
 }
 
 /* Botón de descarga */
-.documento-btn {
+.boton-documento {
     display: block;
     text-align: center;
     background-color: #003b88;
@@ -206,12 +206,12 @@ html body {
     transition: all 0.3s ease;
 }
 
-.documento-btn:hover {
+.boton-documento:hover {
     background-color: #002a60;
     transform: scale(1.02);
 }
 
-.documento-btn:active {
+.boton-documento:active {
     transform: scale(0.98);
 }
 

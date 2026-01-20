@@ -9,13 +9,13 @@ test.describe('Verificación de Traducción y Funcionamiento', () => {
   });
 
   test('La página de login debe cargar correctamente', async ({ page }) => {
-    await page.goto('http://localhost:4000/login');
+    await page.goto('http://localhost:4000/login.html');
     await expect(page.locator('h2')).toContainText('Iniciar sesión');
     await page.screenshot({ path: 'verificacion_login.png' });
   });
 
   test('La página de documentos debe cargar correctamente', async ({ page }) => {
-    await page.goto('http://localhost:4000/documentos');
+    await page.goto('http://localhost:4000/documentos.html');
     await expect(page.locator('h2')).toContainText('Documentos de Rendición de Cuentas');
     // Esperar a que el mensaje de carga desaparezca o aparezcan los documentos
     await page.waitForTimeout(1000);
