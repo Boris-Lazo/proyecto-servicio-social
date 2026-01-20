@@ -25,11 +25,8 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
         app.use(cors(opcionesCors));
         app.use(express.json());
 
-        // En producción (Docker), Nginx sirve los archivos estáticos.
-        // Solo los servimos aquí si no estamos en producción o si se desea redundancia.
-        if (process.env.NODE_ENV !== 'production') {
-            app.use(express.static(path.join(__dirname, '..', 'public')));
-        }
+        // Servir archivos estáticos
+        app.use(express.static(path.join(__dirname, '..', 'public')));
 
         // Servir fotos de álbumes y documentos (necesario para que la API entregue los archivos)
         app.use('/api/uploads', express.static(configuracionApp.rutas.albumes));
@@ -37,6 +34,15 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
 
         // Montar todas las rutas
         app.use(rutas);
+
+        // Soporte para SPA: redirigir rutas no encontradas al index.html
+        // (Solo si no es una ruta de API)
+        app.use((req, res, next) => {
+            if (req.url.startsWith('/api')) {
+                return next();
+            }
+            res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+        });
 
         // Middleware para capturar errores de multer
         app.use((err, req, res, next) => {
