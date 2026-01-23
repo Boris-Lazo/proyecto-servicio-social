@@ -34,7 +34,32 @@ const esquemaDocumento = z.object({
         .regex(/^\d{4}-\d{2}$/, "El mes debe tener el formato AAAA-MM")
 });
 
+
+
+const esquemaSesion = z.object({
+    usuario: z.string().email('Email inválido').min(1, 'Email requerido'),
+    contrasena: z.string().min(1, 'Contraseña requerida'),
+});
+
+const esquemaCambioClave = z.object({
+    viejaClave: z.string().min(1, 'Contraseña actual requerida'),
+    nuevaClave: z.string().min(6, 'La nueva contraseña debe tener al menos 6 caracteres'),
+});
+
+const esquemaRecuperacion = z.object({
+    correo: z.string().email('Email inválido').min(1, 'Email requerido'),
+});
+
+const esquemaRestablecimiento = z.object({
+    tokenTemporal: z.string().min(1, 'Token requerido'),
+    nuevaClave: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+});
+
 module.exports = {
     esquemaAlbum,
-    esquemaDocumento
+    esquemaDocumento,
+    esquemaSesion,
+    esquemaCambioClave,
+    esquemaRecuperacion,
+    esquemaRestablecimiento
 };

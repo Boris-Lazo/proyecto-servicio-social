@@ -5,27 +5,14 @@ const autenticacion = require('../intermediarios/autenticacion');
 const validador = require('../intermediarios/validador');
 const { limitadorSesion, limitadorRecuperacion } = require('../intermediarios/limitePeticiones');
 
+const {
+    esquemaSesion,
+    esquemaCambioClave,
+    esquemaRecuperacion,
+    esquemaRestablecimiento
+} = require('../validaciones/esquemas');
+
 const router = express.Router();
-
-// Esquemas de validación
-const esquemaSesion = z.object({
-    usuario: z.string().email('Email inválido').min(1, 'Email requerido'),
-    contrasena: z.string().min(1, 'Contraseña requerida'),
-});
-
-const esquemaCambioClave = z.object({
-    viejaClave: z.string().min(1, 'Contraseña actual requerida'),
-    nuevaClave: z.string().min(6, 'La nueva contraseña debe tener al menos 6 caracteres'),
-});
-
-const esquemaRecuperacion = z.object({
-    correo: z.string().email('Email inválido').min(1, 'Email requerido'),
-});
-
-const esquemaRestablecimiento = z.object({
-    tokenTemporal: z.string().min(1, 'Token requerido'),
-    nuevaClave: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-});
 
 // Rutas vinculadas a la instancia del controlador
 router.post(
