@@ -34,7 +34,7 @@ class ServicioAlbum {
 
         try {
             carpetaDestino = this.servicioAlmacenamiento.crearCarpetaAlbum(nombreCarpeta);
-            const archivosGuardados = this.servicioAlmacenamiento.guardarArchivosAlbum(archivos, nombreCarpeta);
+            const archivosGuardados = await this.servicioAlmacenamiento.guardarArchivosAlbum(archivos, nombreCarpeta);
 
             const album = {
                 id: nombreCarpeta,

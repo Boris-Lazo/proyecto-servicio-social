@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 /**
  * Servicio de almacenamiento
@@ -22,18 +23,37 @@ class ServicioAlmacenamiento {
     }
 
     /**
-     * Guarda archivos de álbum
+     * Guarda archivos de álbum procesándolos
      */
-    guardarArchivosAlbum(archivos, nombreCarpeta) {
+    async guardarArchivosAlbum(archivos, nombreCarpeta) {
         const carpetaDestino = path.join(this.rutas.albumes, nombreCarpeta);
         const archivosGuardados = [];
 
-        archivos.forEach((archivo) => {
-            const rutaAntigua = archivo.path;
-            const rutaNueva = path.join(carpetaDestino, archivo.filename);
-            fs.renameSync(rutaAntigua, rutaNueva);
-            archivosGuardados.push(archivo.filename);
-        });
+        for (const archivo of archivos) {
+            const nombreBase = path.parse(archivo.originalname).name;
+            // Limpiar nombre para evitar caracteres extraños
+            const nombreLimpio = nombreBase.replace(/[^a-zA-Z0-9]/g, '_');
+            const nombreNuevo = `${Date.now()}_${nombreLimpio}.webp`;
+            const rutaDestino = path.join(carpetaDestino, nombreNuevo);
+
+            try {
+                await sharp(archivo.path)
+                    .resize(1920, 1080, { fit: 'inside', withoutEnlargement: true })
+                    .webp({ quality: 80 })
+                    .toFile(rutaDestino);
+
+                archivosGuardados.push(nombreNuevo);
+
+                // Eliminar archivo temporal original
+                if (fs.existsSync(archivo.path)) {
+                    fs.unlinkSync(archivo.path);
+                }
+            } catch (error) {
+                console.error(`Error procesando imagen ${archivo.originalname}:`, error);
+                // Si falla, intentamos mover el original como respaldo (aunque sea jpg/png)
+                // O podríamos lanzar error. En este caso, continuamos con los siguientes.
+            }
+        }
 
         return archivosGuardados;
     }

@@ -99,6 +99,48 @@ function actualizarContenidoVisor() {
 
     // 3. Renderizar la barra lateral de miniaturas
     renderizarMiniaturas();
+
+    // 4. Renderizar vista móvil (Scroll vertical)
+    renderizarVistaMovil();
+}
+
+/**
+ * Renderiza la vista de scroll vertical para móviles
+ */
+function renderizarVistaMovil() {
+    const elMovil = document.getElementById('lightbox-mobile-scroll');
+    if (!elMovil) return;
+
+    // Si ya tiene contenido del álbum actual, no rehacerlo
+    if (elMovil.dataset.albumId === _visor_albumActual.id) return;
+
+    elMovil.dataset.albumId = _visor_albumActual.id;
+    elMovil.innerHTML = '';
+
+    // Header del álbum
+    const fecha = new Date(_visor_albumActual.fecha).toLocaleDateString();
+    const header = document.createElement('div');
+    header.className = 'lightbox-mobile-header';
+    header.innerHTML = `
+        <h3>${sanitizeHTML(_visor_albumActual.titulo)}</h3>
+        <p class="meta">📅 ${fecha}</p>
+        ${_visor_albumActual.descripcion ? `<p class="desc">${sanitizeHTML(_visor_albumActual.descripcion)}</p>` : ''}
+    `;
+    elMovil.appendChild(header);
+
+    // Lista de fotos
+    _visor_albumActual.fotos.forEach(foto => {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'lightbox-mobile-item';
+
+        const img = document.createElement('img');
+        img.src = `/api/uploads/${_visor_albumActual.id}/${foto}`;
+        img.loading = 'lazy';
+        img.alt = 'Foto del evento';
+
+        imgContainer.appendChild(img);
+        elMovil.appendChild(imgContainer);
+    });
 }
 
 /**

@@ -60,7 +60,7 @@ const almacenamientoDocumento = multer.diskStorage({
  */
 const subidaAlbum = multer({
     storage: almacenamientoAlbum,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB por imagen
+    limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB por imagen
     fileFilter: filtroImagen,
 });
 
