@@ -58,15 +58,27 @@ body {
 
 /* ===== NAVEGACIÓN ===== */
 .navBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    position: fixed;
     width: 100%;
+    position: fixed;
     z-index: 1000;
     background-color: rgba(0, 0, 0, 0.5);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    flex-wrap: nowrap;
+}
+
+/* Override para container-limitado dentro del navBar */
+.navBar .container-limitado {
+    max-width: none;
+    margin: 0;
+    width: 100%;
 }
 
 .navBar.scrolled {
