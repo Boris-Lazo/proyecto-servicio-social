@@ -14,24 +14,26 @@
 
 <body>
     <header class="escuela-header">
-        <img class="vista" src="img/fondo-index.jpg" alt="Niños en el evento de la escuela" loading="lazy">
+        <img class="vista" src="img/fondo-index.jpeg" alt="Niños en el evento de la escuela" loading="lazy">
 
         <nav class="navBar" id="header-top" aria-label="Principal">
-            <div class="escuela-titulo">
-                <h1>CENTRO ESCOLAR "CANTÓN EL AMATAL"</h1>
+            <div class="container-limitado nav-content">
+                <div class="escuela-titulo">
+                    <h1>CENTRO ESCOLAR "CANTÓN EL AMATAL"</h1>
+                </div>
+
+                <button id="menu-toggle" class="menu-toggle" aria-controls="nav-menu" aria-expanded="false">
+                    <span class="sr-only">Abrir menú</span>☰
+                </button>
+
+                <ul id="nav-menu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="eventos.html" title="Fotografías de los eventos de la escuela">Eventos</a></li>
+                    <li><a href="documentos.html" title="Documentos de rendición de cuentas">Documentos</a></li>
+                    <li><a href="index.html#ubicacion" title="Ubicación">Ubicación</a></li>
+                    <li><a href="login.html" title="Login">Login</a></li>
+                </ul>
             </div>
-
-            <button id="menu-toggle" class="menu-toggle" aria-controls="nav-menu" aria-expanded="false">
-                <span class="sr-only">Abrir menú</span>☰
-            </button>
-
-            <ul id="nav-menu">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="eventos.html" title="Fotografías de los eventos de la escuela">Eventos</a></li>
-                <li><a href="documentos.html" title="Documentos de rendición de cuentas">Documentos</a></li>
-                <li><a href="index.html#ubicacion" title="Ubicación">Ubicación</a></li>
-                <li><a href="login.html" title="Login">Login</a></li>
-            </ul>
         </nav>
 
         <section class="escuela-info">
@@ -87,6 +89,9 @@
 
         <!-- Sidebar de Miniaturas (Derecha) -->
         <div class="lightbox-sidebar"></div>
+
+        <!-- Contenedor Scroll Móvil -->
+        <div id="lightbox-mobile-scroll" class="lightbox-mobile-scroll"></div>
     </div>
 
     <script src="js/barra-navegacion-movil.js"></script>

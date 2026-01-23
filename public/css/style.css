@@ -118,11 +118,11 @@ nav a:focus {
 /* ===== CONTENIDO HERO ===== */
 .escuela-info {
     position: absolute;
-    top: 50%;
+    top: 27%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    max-width: 800px;
+    max-width: 975px;
     width: 90%;
     padding: 2rem;
     background-color: rgba(0, 0, 0, 0.75);
@@ -487,6 +487,7 @@ main h2 {
     .escuela-info {
         padding: 1.5rem;
         width: 95%;
+        top: 50%;
     }
 
     main {
