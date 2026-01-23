@@ -3,6 +3,9 @@ const { controladorDocumento } = require('../contenedor');
 const autenticacion = require('../intermediarios/autenticacion');
 const { subidaDocumento } = require('../configuracion/multer');
 
+const { esquemaDocumento } = require('../validaciones/esquemas');
+const validador = require('../intermediarios/validador');
+
 const router = express.Router();
 
 router.get('/thumbnail/:nombreArchivo', (req, res, next) => controladorDocumento.obtenerMiniatura(req, res, next));
@@ -11,6 +14,7 @@ router.post(
     '/',
     autenticacion,
     subidaDocumento.single('doc'),
+    validador(esquemaDocumento),
     (req, res, next) => controladorDocumento.crearDocumento(req, res, next)
 );
 
