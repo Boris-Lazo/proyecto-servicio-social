@@ -1,5 +1,13 @@
 {
-  "dependencies": {
+  "name": "proyecto-escuela",
+  "version": "1.0.0",
+  "description": "Portal público y CMS para el Centro Escolar",
+  "scripts": {
+    "test": "npx playwright test",
+    "start": "cd private && npm start",
+    "install-all": "npm install && cd private && npm install"
+  },
+  "devDependencies": {
     "@playwright/browser-chromium": "^1.57.0",
     "@playwright/test": "^1.57.0"
   }
