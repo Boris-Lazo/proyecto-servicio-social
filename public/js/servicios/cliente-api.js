@@ -102,7 +102,7 @@ const clienteApi = {
                     } else {
                         rechazar(new Error(datos.error || 'Error al subir archivo'));
                     }
-                } catch (e) {
+                } catch (error) {
                     rechazar(new Error('Error al procesar la respuesta del servidor'));
                 }
             };

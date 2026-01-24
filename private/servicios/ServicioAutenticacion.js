@@ -26,14 +26,14 @@ class ServicioAutenticacion {
             throw new ErrorNoAutorizado('Credenciales inválidas');
         }
 
-        const esValido = await bcrypt.compare(contrasena, usuario.hash);
+        const esValido = await bcrypt.compare(contrasena, usuario.clave_hash);
         if (!esValido) {
             throw new ErrorNoAutorizado('Credenciales inválidas');
         }
 
         return generarToken({
             idUsuario: usuario.id,
-            correo: usuario.user,
+            correo: usuario.usuario,
         });
     }
 
@@ -46,7 +46,7 @@ class ServicioAutenticacion {
             throw new ErrorNoEncontrado('Usuario no encontrado');
         }
 
-        const esValido = await bcrypt.compare(viejaClave, usuario.hash);
+        const esValido = await bcrypt.compare(viejaClave, usuario.clave_hash);
         if (!esValido) {
             throw new ErrorNoAutorizado('Contraseña actual incorrecta');
         }
@@ -78,13 +78,13 @@ class ServicioAutenticacion {
             throw new ErrorValidacion('Token inválido o expirado');
         }
 
-        if (Date.now() > registro.expires_at) {
+        if (Date.now() > registro.expira_el) {
             await this.repositorioRestablecimientoClave.eliminarPorToken(token);
             throw new ErrorValidacion('Token expirado');
         }
 
         const nuevoHash = await bcrypt.hash(nuevaClave, 10);
-        await this.repositorioUsuario.actualizarContrasena(registro.user_email, nuevoHash);
+        await this.repositorioUsuario.actualizarContrasena(registro.correo_usuario, nuevoHash);
         await this.repositorioRestablecimientoClave.eliminarPorToken(token);
     }
 }

@@ -4,32 +4,32 @@
 function $(id) { return document.getElementById(id); }
 
 // ---------- MOSTRAR/OCULTAR CONTRASEÑA ----------
-$('show-password').addEventListener('change', (e) => {
-    const passwordInput = $('password');
-    passwordInput.type = e.target.checked ? 'text' : 'password';
+$('show-password').addEventListener('change', (evento) => {
+    const entradaPassword = $('password');
+    entradaPassword.type = evento.target.checked ? 'text' : 'password';
 });
 
 // ---------- LOGIN ----------
-$('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+$('login-form').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
 
-    const email = $('usuario').value.trim();
-    const password = $('password').value;
+    const correo = $('usuario').value.trim();
+    const contrasena = $('password').value;
 
-    if (!email || !password) {
+    if (!correo || !contrasena) {
         alert('Por favor completa todos los campos');
         return;
     }
 
     try {
-        const data = await api.enviar('/api/login', { usuario: email, contrasena: password });
+        const datos = await api.enviar('/api/login', { usuario: correo, contrasena: contrasena });
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('usuario', email);
+        localStorage.setItem('token', datos.token);
+        localStorage.setItem('usuario', correo);
         window.location.href = 'admin.html';
 
-    } catch (err) {
-        console.error('Error de login:', err);
-        alert(err.message || 'Error al iniciar sesión');
+    } catch (error) {
+        console.error('Error de login:', error);
+        alert(error.message || 'Error al iniciar sesión');
     }
 });

@@ -9,13 +9,13 @@ class ServicioCorreo {
      */
     constructor(configuracion) {
         this.configuracion = configuracion;
-        this.transporter = nodemailer.createTransport({
+        this.transportador = nodemailer.createTransport({
             host: configuracion.host,
-            port: configuracion.port,
-            secure: configuracion.port === 465,
+            port: configuracion.puerto,
+            secure: configuracion.puerto === 465,
             auth: {
-                user: configuracion.user,
-                pass: configuracion.pass,
+                user: configuracion.usuario,
+                pass: configuracion.clave,
             },
         });
     }
@@ -37,8 +37,8 @@ class ServicioCorreo {
       </div>
     `;
 
-        const info = await this.transporter.sendMail({
-            from: `"Centro Escolar" <${this.configuracion.from}>`,
+        const info = await this.transportador.sendMail({
+            from: `"Centro Escolar" <${this.configuracion.desde}>`,
             to: correo,
             subject: `Código de recuperación: ${token}`,
             html: html,
@@ -51,8 +51,8 @@ class ServicioCorreo {
      * Método genérico para enviar correos
      */
     async enviarCorreo(opciones) {
-        return this.transporter.sendMail({
-            from: `"Centro Escolar" <${this.configuracion.from}>`,
+        return this.transportador.sendMail({
+            from: `"Centro Escolar" <${this.configuracion.desde}>`,
             ...opciones,
         });
     }

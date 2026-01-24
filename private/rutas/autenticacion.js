@@ -1,5 +1,4 @@
 const express = require('express');
-const { z } = require('zod');
 const { controladorAutenticacion } = require('../contenedor');
 const autenticacion = require('../intermediarios/autenticacion');
 const validador = require('../intermediarios/validador');
@@ -19,27 +18,27 @@ router.post(
     '/login',
     limitadorSesion,
     validador(esquemaSesion),
-    (req, res, next) => controladorAutenticacion.iniciarSesion(req, res, next)
+    (peticion, respuesta, siguiente) => controladorAutenticacion.iniciarSesion(peticion, respuesta, siguiente)
 );
 
 router.post(
-    '/change-password',
+    '/cambiar-clave',
     autenticacion,
     validador(esquemaCambioClave),
-    (req, res, next) => controladorAutenticacion.cambiarContrasena(req, res, next)
+    (peticion, respuesta, siguiente) => controladorAutenticacion.cambiarContrasena(peticion, respuesta, siguiente)
 );
 
 router.post(
-    '/recover',
+    '/recuperar',
     limitadorRecuperacion,
     validador(esquemaRecuperacion),
-    (req, res, next) => controladorAutenticacion.recuperar(req, res, next)
+    (peticion, respuesta, siguiente) => controladorAutenticacion.recuperar(peticion, respuesta, siguiente)
 );
 
 router.post(
-    '/recover/change',
+    '/recuperar/cambiar',
     validador(esquemaRestablecimiento),
-    (req, res, next) => controladorAutenticacion.restablecerContrasena(req, res, next)
+    (peticion, respuesta, siguiente) => controladorAutenticacion.restablecerContrasena(peticion, respuesta, siguiente)
 );
 
 module.exports = router;

@@ -32,11 +32,11 @@ class ServicioDocumento {
             throw new ErrorValidacion('No se envió archivo');
         }
 
-        const doc = { titulo, mes, filename: archivo.filename };
-        await this.repositorioDocumento.crear(doc);
+        const documento = { titulo, mes, nombreArchivo: archivo.filename };
+        await this.repositorioDocumento.crear(documento);
 
-        this.generarMiniatura(archivo.filename).catch(err => {
-            console.error(`Error generando miniatura para ${archivo.filename}:`, err);
+        this.generarMiniatura(archivo.filename).catch(error => {
+            console.error(`Error generando miniatura para ${archivo.filename}:`, error);
         });
 
         return { nombreArchivo: archivo.filename };
@@ -53,15 +53,15 @@ class ServicioDocumento {
      * Elimina un documento y su archivo
      */
     async eliminarDocumento(id) {
-        const doc = await this.repositorioDocumento.obtenerPorId(id);
-        if (!doc) throw new ErrorNoEncontrado('Documento no encontrado');
+        const documento = await this.repositorioDocumento.obtenerPorId(id);
+        if (!documento) throw new ErrorNoEncontrado('Documento no encontrado');
 
-        this.servicioAlmacenamiento.eliminarDocumento(doc.filename);
+        this.servicioAlmacenamiento.eliminarDocumento(documento.nombre_archivo);
 
         try {
-            const rutaMiniatura = path.join(this.configuracion.rutas.miniaturas, `${doc.filename}.png`);
+            const rutaMiniatura = path.join(this.configuracion.rutas.miniaturas, `${documento.nombre_archivo}.png`);
             await fs.unlink(rutaMiniatura);
-        } catch (err) {}
+        } catch (error) {}
 
         await this.repositorioDocumento.eliminarPorId(id);
     }
@@ -75,12 +75,12 @@ class ServicioDocumento {
 
         try {
             const { pdf } = await import('pdf-to-img');
-            const documento = await pdf(rutaPdf, { scale: 2.0 });
-            const primeraPagina = await documento.getPage(1);
+            const documentoPdf = await pdf(rutaPdf, { scale: 2.0 });
+            const primeraPagina = await documentoPdf.getPage(1);
             await fs.writeFile(rutaMiniatura, primeraPagina);
-        } catch (err) {
-            console.error(`Error generando miniatura para ${nombreArchivo}:`, err);
-            throw err;
+        } catch (error) {
+            console.error(`Error generando miniatura para ${nombreArchivo}:`, error);
+            throw error;
         }
     }
 
@@ -93,7 +93,7 @@ class ServicioDocumento {
         try {
             await fs.access(rutaMiniatura);
             return rutaMiniatura;
-        } catch (err) {
+        } catch (error) {
             await this.generarMiniatura(nombreArchivo);
             return rutaMiniatura;
         }

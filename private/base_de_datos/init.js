@@ -13,49 +13,52 @@ module.exports = new Promise((resolve, reject) => {
     }
 
     db.serialize(() => {
-      // Crear tablas
-      db.run(`CREATE TABLE IF NOT EXISTS users (
+      // Crear tablas en español
+      db.run(`CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user TEXT UNIQUE NOT NULL,
-        hash TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        usuario TEXT UNIQUE NOT NULL,
+        clave_hash TEXT NOT NULL,
+        creado_el DATETIME DEFAULT CURRENT_TIMESTAMP
       )`);
-      db.run(`CREATE TABLE IF NOT EXISTS albums (
+
+      db.run(`CREATE TABLE IF NOT EXISTS albumes (
         id TEXT PRIMARY KEY,
         titulo TEXT NOT NULL,
         fecha DATE NOT NULL,
         descripcion TEXT,
         fotos TEXT,
-        uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        subido_el DATETIME DEFAULT CURRENT_TIMESTAMP
       )`);
-      db.run(`CREATE TABLE IF NOT EXISTS docs (
+
+      db.run(`CREATE TABLE IF NOT EXISTS documentos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         titulo TEXT NOT NULL,
         mes TEXT NOT NULL,
-        filename TEXT NOT NULL,
-        uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        nombre_archivo TEXT NOT NULL,
+        subido_el DATETIME DEFAULT CURRENT_TIMESTAMP
       )`);
-      db.run(`CREATE TABLE IF NOT EXISTS password_resets (
+
+      db.run(`CREATE TABLE IF NOT EXISTS restablecimientos_clave (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_email TEXT NOT NULL,
+        correo_usuario TEXT NOT NULL,
         token TEXT NOT NULL,
-        expires_at INTEGER NOT NULL
+        expira_el INTEGER NOT NULL
       )`);
 
       // Usuarios por defecto
       const predeterminados = [
-        { usuario: 'directora@amatal.edu.sv', clave: process.env.USER_DIRECTORA_PASS },
-        { usuario: 'ericka.flores@clases.edu.sv', clave: process.env.USER_SUBDIRECTORA_PASS },
-        { usuario: 'borisstanleylazocastillo@gmail.com', clave: process.env.USER_DEV_PASS }
+        { correo: 'directora@amatal.edu.sv', clave: process.env.USER_DIRECTORA_PASS },
+        { correo: 'ericka.flores@clases.edu.sv', clave: process.env.USER_SUBDIRECTORA_PASS },
+        { correo: 'borisstanleylazocastillo@gmail.com', clave: process.env.USER_DEV_PASS }
       ].filter(u => u.clave);
 
       if (predeterminados.length > 0) {
-        const sentencia = db.prepare('INSERT OR IGNORE INTO users (user, hash) VALUES (?, ?)');
+        const sentencia = db.prepare('INSERT OR IGNORE INTO usuarios (usuario, clave_hash) VALUES (?, ?)');
         const promesas = predeterminados.map(u => {
           return new Promise((resolve, reject) => {
             bcrypt.hash(u.clave, 10, (err, hash) => {
               if (err) return reject(err);
-              sentencia.run(u.usuario, hash, (err) => {
+              sentencia.run(u.correo, hash, (err) => {
                 if (err) return reject(err);
                 resolve();
               });

@@ -9,7 +9,7 @@ class RepositorioRestablecimientoClave extends RepositorioBase {
      */
     async crear(correo, token, expiraEn) {
         return this.ejecutar(
-            'INSERT INTO password_resets (user_email, token, expires_at) VALUES (?, ?, ?)',
+            'INSERT INTO restablecimientos_clave (correo_usuario, token, expira_el) VALUES (?, ?, ?)',
             [correo, token, expiraEn]
         );
     }
@@ -18,21 +18,21 @@ class RepositorioRestablecimientoClave extends RepositorioBase {
      * Busca un token de recuperación
      */
     async obtenerPorToken(token) {
-        return this.obtenerUno('SELECT * FROM password_resets WHERE token = ?', [token]);
+        return this.obtenerUno('SELECT * FROM restablecimientos_clave WHERE token = ?', [token]);
     }
 
     /**
      * Elimina un token de recuperación
      */
     async eliminarPorToken(token) {
-        return this.ejecutar('DELETE FROM password_resets WHERE token = ?', [token]);
+        return this.ejecutar('DELETE FROM restablecimientos_clave WHERE token = ?', [token]);
     }
 
     /**
      * Elimina tokens expirados (limpieza)
      */
     async eliminarExpirados() {
-        return this.ejecutar('DELETE FROM password_resets WHERE expires_at < ?', [Date.now()]);
+        return this.ejecutar('DELETE FROM restablecimientos_clave WHERE expira_el < ?', [Date.now()]);
     }
 }
 

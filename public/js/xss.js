@@ -7,7 +7,7 @@
  * @param {string} unsafeString - La cadena de texto a sanitizar.
  * @returns {string} - La cadena de texto sanitizada.
  */
-function sanitizeHTML(unsafeString) {
+function sanearHTML(unsafeString) {
   if (typeof unsafeString !== 'string') {
     return '';
   }

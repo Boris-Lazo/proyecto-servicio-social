@@ -51,7 +51,6 @@ class ServicioAlmacenamiento {
             } catch (error) {
                 console.error(`Error procesando imagen ${archivo.originalname}:`, error);
                 // Si falla, intentamos mover el original como respaldo (aunque sea jpg/png)
-                // O podríamos lanzar error. En este caso, continuamos con los siguientes.
             }
         }
 

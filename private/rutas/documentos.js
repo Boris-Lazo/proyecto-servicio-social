@@ -8,18 +8,18 @@ const validador = require('../intermediarios/validador');
 
 const router = express.Router();
 
-router.get('/thumbnail/:nombreArchivo', (req, res, next) => controladorDocumento.obtenerMiniatura(req, res, next));
+router.get('/miniatura/:nombreArchivo', (peticion, respuesta, siguiente) => controladorDocumento.obtenerMiniatura(peticion, respuesta, siguiente));
 
 router.post(
     '/',
     autenticacion,
     subidaDocumento.single('doc'),
     validador(esquemaDocumento),
-    (req, res, next) => controladorDocumento.crearDocumento(req, res, next)
+    (peticion, respuesta, siguiente) => controladorDocumento.crearDocumento(peticion, respuesta, siguiente)
 );
 
-router.get('/', (req, res, next) => controladorDocumento.listarDocumentos(req, res, next));
+router.get('/', (peticion, respuesta, siguiente) => controladorDocumento.listarDocumentos(peticion, respuesta, siguiente));
 
-router.delete('/:id', autenticacion, (req, res, next) => controladorDocumento.eliminarDocumento(req, res, next));
+router.delete('/:id', autenticacion, (peticion, respuesta, siguiente) => controladorDocumento.eliminarDocumento(peticion, respuesta, siguiente));
 
 module.exports = router;

@@ -5,20 +5,20 @@ const MAX_PDF_MB = 10;
 
 // ---------- UTILIDADES ----------
 function $(id) { return document.getElementById(id); }
-function showError(box, msg) {
-    box.textContent = msg;
-    box.setAttribute('role', 'alert');
+function mostrarError(caja, mensaje) {
+    caja.textContent = mensaje;
+    caja.setAttribute('role', 'alert');
 }
-function showSuccess(box, msg) {
-    box.textContent = msg;
-    box.setAttribute('role', 'status');
+function mostrarExito(caja, mensaje) {
+    caja.textContent = mensaje;
+    caja.setAttribute('role', 'status');
 }
-function resetMsgs(...boxes) {
-    boxes.forEach(b => b.textContent = '');
+function reiniciarMensajes(...cajas) {
+    cajas.forEach(caja => caja.textContent = '');
 }
 
 // ---------- VERIFICAR AUTENTICACIÓN ----------
-function checkAuth() {
+function verificarAutenticacion() {
     const token = localStorage.getItem('token');
     const usuario = localStorage.getItem('usuario');
 
@@ -35,262 +35,262 @@ function checkAuth() {
     };
 
     // Mostrar nombre del usuario
-    const userNameEl = $('user-name');
-    if (userNameEl) {
-        userNameEl.textContent = nombresUsuarios[usuario] || usuario;
+    const nombreUsuarioEl = $('nombre-usuario');
+    if (nombreUsuarioEl) {
+        nombreUsuarioEl.textContent = nombresUsuarios[usuario] || usuario;
     }
 
     return true;
 }
 
 // Verificar al cargar la página
-if (!checkAuth()) {
+if (!verificarAutenticacion()) {
     throw new Error('No autorizado');
 }
 
 // ---------- MENÚ HAMBURGUESA (MÓVIL) ----------
-const menuToggle = $('admin-menu-toggle');
-const navMenu = $('admin-nav-menu');
+const alternarMenu = $('admin-menu-toggle');
+const menuNavegacion = $('admin-nav-menu');
 
-if (menuToggle && navMenu) {
-    menuToggle.addEventListener('click', () => {
-        const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-        menuToggle.setAttribute('aria-expanded', !isExpanded);
-        navMenu.classList.toggle('show');
+if (alternarMenu && menuNavegacion) {
+    alternarMenu.addEventListener('click', () => {
+        const estaExpandido = alternarMenu.getAttribute('aria-expanded') === 'true';
+        alternarMenu.setAttribute('aria-expanded', !estaExpandido);
+        menuNavegacion.classList.toggle('show');
     });
 }
 
 // ---------- SISTEMA DE PESTAÑAS ----------
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const targetTab = btn.dataset.tab;
+document.querySelectorAll('.tab-btn').forEach(boton => {
+    boton.addEventListener('click', () => {
+        const idDestino = boton.dataset.tab;
 
         // Remover active de todos los botones y contenidos
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-contenido').forEach(c => c.classList.remove('active'));
 
         // Activar el botón y contenido seleccionado
-        btn.classList.add('active');
-        document.getElementById(`tab-${targetTab}`).classList.add('active');
+        boton.classList.add('active');
+        document.getElementById(`tab-${idDestino}`).classList.add('active');
     });
 });
 
 // ---------- CARGAR ESTADÍSTICAS ----------
-async function loadStats() {
+async function cargarEstadisticas() {
     try {
         // Cargar álbumes
-        const albums = await api.obtener('/api/albums');
-        $('stat-albums').textContent = albums.length || 0;
+        const albumes = await api.obtener('/api/albumes');
+        $('stat-albums').textContent = albumes.length || 0;
 
         // Contar fotos totales
-        const totalPhotos = albums.reduce((sum, album) => sum + (album.fotos?.length || 0), 0);
-        $('stat-photos').textContent = totalPhotos;
+        const fotosTotales = albumes.reduce((suma, album) => suma + (album.fotos?.length || 0), 0);
+        $('stat-photos').textContent = fotosTotales;
 
         // Última actualización
-        if (albums.length > 0) {
-            const lastDate = new Date(albums[0].fecha);
-            $('stat-date').textContent = lastDate.toLocaleDateString('es-SV');
+        if (albumes.length > 0) {
+            const ultimaFecha = new Date(albumes[0].fecha);
+            $('stat-fecha').textContent = ultimaFecha.toLocaleDateString('es-SV');
         }
 
         // Cargar documentos
-        const docs = await api.obtener('/api/docs');
-        $('stat-docs').textContent = docs.length || 0;
-    } catch (err) {
-        console.error('Error al cargar estadísticas:', err);
+        const documentos = await api.obtener('/api/documentos');
+        $('stat-docs').textContent = documentos.length || 0;
+    } catch (error) {
+        console.error('Error al cargar estadísticas:', error);
     }
 }
 
 // Cargar estadísticas al iniciar
-loadStats();
+cargarEstadisticas();
 
 // ---------- PREVIEW DE FOTOS ----------
-$('fotos').addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    const fileLabel = e.target.parentElement.querySelector('.file-input-label');
+$('fotos').addEventListener('change', (evento) => {
+    const archivos = Array.from(evento.target.files);
+    const etiquetaArchivo = evento.target.parentElement.querySelector('.file-input-label');
 
-    if (files.length > MAX_FOTOS) {
-        showError($('form-error-album'), `Máximo ${MAX_FOTOS} fotos`);
-        e.target.value = '';
+    if (archivos.length > MAX_FOTOS) {
+        mostrarError($('form-error-album'), `Máximo ${MAX_FOTOS} fotos`);
+        evento.target.value = '';
         $('preview').innerHTML = '';
-        fileLabel.textContent = 'Haz clic para seleccionar archivos';
+        etiquetaArchivo.textContent = 'Haz clic para seleccionar archivos';
         return;
     }
 
-    fileLabel.textContent = `${files.length} archivo(s) seleccionado(s)`;
+    etiquetaArchivo.textContent = `${archivos.length} archivo(s) seleccionado(s)平衡`;
     $('preview').innerHTML = '';
 
-    files.forEach(file => {
-        if (file.type !== 'image/jpeg') return;
-        const reader = new FileReader();
-        reader.onload = ev => {
+    archivos.forEach(archivo => {
+        if (archivo.type !== 'image/jpeg' && archivo.type !== 'image/png') return;
+        const lector = new FileReader();
+        lector.onload = ev => {
             const img = document.createElement('img');
             img.src = ev.target.result;
-            img.alt = 'preview';
+            img.alt = 'vista previa';
             $('preview').appendChild(img);
         };
-        reader.readAsDataURL(file);
+        lector.readAsDataURL(archivo);
     });
 });
 
 // ---------- PREVIEW DE PDF ----------
-$('doc-file').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    const fileLabel = e.target.parentElement.querySelector('.file-input-label');
+$('doc-file').addEventListener('change', (evento) => {
+    const archivo = evento.target.files[0];
+    const etiquetaArchivo = evento.target.parentElement.querySelector('.file-input-label');
 
-    if (file) {
-        fileLabel.textContent = file.name;
+    if (archivo) {
+        etiquetaArchivo.textContent = archivo.name;
     } else {
-        fileLabel.textContent = 'Haz clic para seleccionar archivo PDF';
+        etiquetaArchivo.textContent = 'Haz clic para seleccionar archivo PDF';
     }
 });
 
 // ---------- SUBIR ÁLBUM ----------
-$('album-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    resetMsgs($('form-error-album'), $('form-success-album'));
+$('album-form').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    reiniciarMensajes($('form-error-album'), $('form-success-album'));
 
     const titulo = $('titulo').value.trim();
     const fecha = $('fecha').value;
     const descripcion = $('descripcion').value.trim();
-    const files = Array.from($('fotos').files);
+    const archivos = Array.from($('fotos').files);
 
-    if (!titulo || !fecha || files.length === 0) {
-        showError($('form-error-album'), 'Completa título, fecha y al menos una foto');
+    if (!titulo || !fecha || archivos.length === 0) {
+        mostrarError($('form-error-album'), 'Completa título, fecha y al menos una foto');
         return;
     }
 
-    const formData = new FormData();
-    formData.append('titulo', titulo);
-    formData.append('fecha', fecha);
-    formData.append('descripcion', descripcion);
-    files.forEach(f => formData.append('fotos', f));
+    const datosFormulario = new FormData();
+    datosFormulario.append('titulo', titulo);
+    datosFormulario.append('fecha', fecha);
+    datosFormulario.append('descripcion', descripcion);
+    archivos.forEach(f => datosFormulario.append('fotos', f));
 
-    const btn = $('btn-enviar-album');
-    btn.disabled = true;
-    btn.textContent = 'Subiendo…';
+    const boton = $('btn-enviar-album');
+    boton.disabled = true;
+    boton.textContent = 'Subiendo…';
 
     try {
-        const response = await api.subir('/api/albums', formData, (porc) => {
-            $('progress').value = porc;
-            $('progress-text').textContent = `${porc}%`;
+        const respuesta = await api.subir('/api/albumes', datosFormulario, (porcentaje) => {
+            $('progress').value = porcentaje;
+            $('progress-text').textContent = `${porcentaje}%`;
         });
 
-        const album = response.album;
-        showSuccess($('form-success-album'), `✅ Álbum "${album.titulo}" publicado con ${album.fotos.length} fotos.`);
+        const album = respuesta.album;
+        mostrarExito($('form-success-album'), `✅ Álbum "${album.titulo}" publicado con ${album.fotos.length} fotos.`);
         $('album-form').reset();
         $('preview').innerHTML = '';
         $('progress').value = 0;
         $('progress-text').textContent = '0%';
         document.querySelector('#fotos + .file-input-label').textContent = 'Haz clic para seleccionar archivos';
-        loadStats();
-    } catch (err) {
-        showError($('form-error-album'), '❌ ' + err.message);
+        cargarEstadisticas();
+    } catch (error) {
+        mostrarError($('form-error-album'), '❌ ' + error.message);
     } finally {
-        btn.disabled = false;
-        btn.textContent = 'Publicar álbum';
+        boton.disabled = false;
+        boton.textContent = 'Publicar álbum';
     }
 });
 
 // ---------- SUBIR PDF ----------
-$('doc-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    resetMsgs($('form-error-doc'), $('form-success-doc'));
+$('doc-form').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    reiniciarMensajes($('form-error-doc'), $('form-success-doc'));
 
     const titulo = $('doc-titulo').value.trim();
     const mes = $('doc-mes').value;
-    const file = $('doc-file').files[0];
+    const archivo = $('doc-file').files[0];
 
-    if (!titulo || !mes || !file) {
-        showError($('form-error-doc'), 'Completa título, mes y selecciona un PDF');
+    if (!titulo || !mes || !archivo) {
+        mostrarError($('form-error-doc'), 'Completa título, mes y selecciona un PDF');
         return;
     }
 
-    if (file.size > MAX_PDF_MB * 1024 * 1024) {
-        showError($('form-error-doc'), `Máximo ${MAX_PDF_MB} MB por PDF`);
+    if (archivo.size > MAX_PDF_MB * 1024 * 1024) {
+        mostrarError($('form-error-doc'), `Máximo ${MAX_PDF_MB} MB por PDF`);
         return;
     }
 
-    const formData = new FormData();
-    formData.append('titulo', titulo);
-    formData.append('mes', mes);
-    formData.append('doc', file);
+    const datosFormulario = new FormData();
+    datosFormulario.append('titulo', titulo);
+    datosFormulario.append('mes', mes);
+    datosFormulario.append('doc', archivo);
 
-    const btn = $('btn-enviar-doc');
-    btn.disabled = true;
-    btn.textContent = 'Subiendo…';
+    const boton = $('btn-enviar-doc');
+    boton.disabled = true;
+    boton.textContent = 'Subiendo…';
 
     try {
-        await api.subir('/api/docs', formData, (porc) => {
-            $('progress-doc').value = porc;
-            $('progress-text-doc').textContent = `${porc}%`;
+        await api.subir('/api/documentos', datosFormulario, (porcentaje) => {
+            $('progress-doc').value = porcentaje;
+            $('progress-text-doc').textContent = `${porcentaje}%`;
         });
 
-        showSuccess($('form-success-doc'), `✅ PDF "${titulo}" subido correctamente.`);
+        mostrarExito($('form-success-doc'), `✅ PDF "${titulo}" subido correctamente.`);
         $('doc-form').reset();
         $('progress-doc').value = 0;
         $('progress-text-doc').textContent = '0%';
         document.querySelector('#doc-file + .file-input-label').textContent = 'Haz clic para seleccionar archivo PDF';
-        loadStats();
-    } catch (err) {
-        showError($('form-error-doc'), '❌ ' + err.message);
+        cargarEstadisticas();
+    } catch (error) {
+        mostrarError($('form-error-doc'), '❌ ' + error.message);
     } finally {
-        btn.disabled = false;
-        btn.textContent = 'Subir documento';
+        boton.disabled = false;
+        boton.textContent = 'Subir documento';
     }
 });
 
 // ---------- MODAL REUTILIZABLE ----------
-const confirmModal = document.getElementById('confirm-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalMessage = document.getElementById('modal-message');
-const modalHint = document.getElementById('modal-hint');
-const modalCancel = document.getElementById('modal-cancel');
-const modalConfirm = document.getElementById('modal-confirm');
+const modalConfirmacion = document.getElementById('confirm-modal');
+const tituloModal = document.getElementById('modal-title');
+const mensajeModal = document.getElementById('modal-message');
+const pistaModal = document.getElementById('modal-hint');
+const cancelarModal = document.getElementById('modal-cancel');
+const confirmarModal = document.getElementById('modal-confirm');
 
-let modalConfirmAction = null;
+let accionConfirmarModal = null;
 
-function showModal(title, message, hint, confirmText, onConfirm) {
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
-    modalHint.textContent = hint;
-    modalConfirm.textContent = confirmText;
-    modalConfirmAction = onConfirm;
-    confirmModal.classList.add('active');
+function mostrarModal(titulo, mensaje, pista, textoConfirmar, alConfirmar) {
+    tituloModal.textContent = titulo;
+    mensajeModal.textContent = mensaje;
+    pistaModal.textContent = pista;
+    confirmarModal.textContent = textoConfirmar;
+    accionConfirmarModal = alConfirmar;
+    modalConfirmacion.classList.add('active');
 }
 
-function hideModal() {
-    confirmModal.classList.remove('active');
-    modalConfirmAction = null;
+function ocultarModal() {
+    modalConfirmacion.classList.remove('active');
+    accionConfirmarModal = null;
 }
 
 // Cancelar - cerrar modal
-modalCancel.addEventListener('click', hideModal);
+cancelarModal.addEventListener('click', ocultarModal);
 
 // Confirmar - ejecutar acción
-modalConfirm.addEventListener('click', () => {
-    if (modalConfirmAction) {
-        modalConfirmAction();
+confirmarModal.addEventListener('click', () => {
+    if (accionConfirmarModal) {
+        accionConfirmarModal();
     }
-    hideModal();
+    ocultarModal();
 });
 
 // Cerrar modal al hacer click fuera
-confirmModal.addEventListener('click', (e) => {
-    if (e.target === confirmModal) {
-        hideModal();
+modalConfirmacion.addEventListener('click', (evento) => {
+    if (evento.target === modalConfirmacion) {
+        ocultarModal();
     }
 });
 
 // Cerrar modal con tecla ESC
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && confirmModal.classList.contains('active')) {
-        hideModal();
+document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape' && modalConfirmacion.classList.contains('active')) {
+        ocultarModal();
     }
 });
 
 // ---------- CERRAR SESIÓN ----------
 $('btn-logout').addEventListener('click', () => {
-    showModal(
+    mostrarModal(
         '🚪 Cerrar Sesión',
         '¿Estás seguro de que deseas cerrar sesión?',
         'Perderás cualquier progreso no guardado.',
@@ -306,124 +306,124 @@ $('btn-logout').addEventListener('click', () => {
 // ---------- GESTIÓN DE CONTENIDO ----------
 
 // Cargar lista de álbumes
-async function loadAlbumsList() {
-    const container = $('albums-list');
+async function cargarListaAlbumes() {
+    const contenedor = $('lista-albumes');
     try {
-        const albums = await api.obtener('/api/albums');
+        const albumes = await api.obtener('/api/albumes');
 
-        if (albums.length === 0) {
-            container.innerHTML = '<p class="empty-list">No hay álbumes publicados.</p>';
+        if (albumes.length === 0) {
+            contenedor.innerHTML = '<p class="empty-list">No hay álbumes publicados.</p>';
             return;
         }
 
-        container.innerHTML = '';
-        albums.forEach(album => {
+        contenedor.innerHTML = '';
+        albumes.forEach(album => {
             const item = document.createElement('div');
-            item.className = 'content-item';
+            item.className = 'contenido-item';
 
-            const date = new Date(album.fecha);
-            const formattedDate = date.toLocaleDateString('es-SV');
+            const fecha = new Date(album.fecha);
+            const fechaFormateada = fecha.toLocaleDateString('es-SV');
 
             item.innerHTML = `
-                <div class="content-info">
-                    <h4>${sanitizeHTML(album.titulo)}</h4>
-                    <div class="content-meta">
-                        <span>📅 ${formattedDate}</span>
+                <div class="contenido-info">
+                    <h4>${sanearHTML(album.titulo)}</h4>
+                    <div class="contenido-meta">
+                        <span>📅 ${fechaFormateada}</span>
                         <span>📸 ${album.fotos.length} fotos</span>
                     </div>
                 </div>
                 <button class="btn-delete" data-album-id="${album.id}">🗑️ Eliminar</button>
             `;
 
-            container.appendChild(item);
+            contenedor.appendChild(item);
         });
 
         // Agregar event listeners a botones de eliminar
-        container.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const albumId = btn.dataset.albumId;
-                const albumTitle = btn.closest('.content-item').querySelector('h4').textContent;
-                const photoCount = albums.find(a => a.id === albumId).fotos.length;
+        contenedor.querySelectorAll('.btn-delete').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const idAlbum = boton.dataset.idAlbum;
+                const tituloAlbum = boton.closest('.contenido-item').querySelector('h4').textContent;
+                const conteoFotos = albumes.find(a => a.id === idAlbum).fotos.length;
 
-                showModal(
+                mostrarModal(
                     '🗑️ Eliminar Álbum',
-                    `¿Estás seguro de eliminar "${albumTitle}"?`,
-                    `Se eliminarán ${photoCount} fotos. Esta acción no se puede deshacer.`,
+                    `¿Estás seguro de eliminar "${tituloAlbum}"?`,
+                    `Se eliminarán ${conteoFotos} fotos. Esta acción no se puede deshacer.`,
                     'Eliminar',
-                    () => deleteAlbum(albumId)
+                    () => eliminarAlbum(idAlbum)
                 );
             });
         });
 
     } catch (error) {
         console.error('Error al cargar álbumes:', error);
-        container.innerHTML = '<p class="error-content">Error al cargar álbumes.</p>';
+        contenedor.innerHTML = '<p class="error-contenido">Error al cargar álbumes.</p>';
     }
 }
 
 // Cargar lista de documentos
-async function loadDocsList() {
-    const container = $('docs-list');
+async function cargarListaDocumentos() {
+    const contenedor = $('lista-documentos');
     try {
-        const docs = await api.obtener('/api/docs');
+        const documentos = await api.obtener('/api/documentos');
 
-        if (docs.length === 0) {
-            container.innerHTML = '<p class="empty-list">No hay documentos publicados.</p>';
+        if (documentos.length === 0) {
+            contenedor.innerHTML = '<p class="empty-list">No hay documentos publicados.</p>';
             return;
         }
 
-        container.innerHTML = '';
-        docs.forEach(doc => {
+        contenedor.innerHTML = '';
+        documentos.forEach(doc => {
             const item = document.createElement('div');
-            item.className = 'content-item';
+            item.className = 'contenido-item';
 
-            const [year, month] = doc.mes.split('-');
-            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            const [anio, mes] = doc.mes.split('-');
+            const nombresMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            const monthName = monthNames[parseInt(month) - 1];
+            const nombreMes = nombresMeses[parseInt(mes) - 1];
 
             item.innerHTML = `
-                <div class="content-info">
-                    <h4>${sanitizeHTML(doc.titulo)}</h4>
-                    <div class="content-meta">
-                        <span>📅 ${monthName} ${year}</span>
+                <div class="contenido-info">
+                    <h4>${sanearHTML(doc.titulo)}</h4>
+                    <div class="contenido-meta">
+                        <span>📅 ${nombreMes} ${anio}</span>
                         <span>📄 PDF</span>
                     </div>
                 </div>
                 <button class="btn-delete" data-doc-id="${doc.id}">🗑️ Eliminar</button>
             `;
 
-            container.appendChild(item);
+            contenedor.appendChild(item);
         });
 
         // Agregar event listeners a botones de eliminar
-        container.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const docId = btn.dataset.docId;
-                const docTitle = btn.closest('.content-item').querySelector('h4').textContent;
+        contenedor.querySelectorAll('.btn-delete').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const idDoc = boton.dataset.idDoc;
+                const tituloDoc = boton.closest('.contenido-item').querySelector('h4').textContent;
 
-                showModal(
+                mostrarModal(
                     '🗑️ Eliminar Documento',
-                    `¿Estás seguro de eliminar "${docTitle}"?`,
+                    `¿Estás seguro de eliminar "${tituloDoc}"?`,
                     'Esta acción no se puede deshacer.',
                     'Eliminar',
-                    () => deleteDocument(docId)
+                    () => eliminarDocumento(idDoc)
                 );
             });
         });
 
     } catch (error) {
         console.error('Error al cargar documentos:', error);
-        container.innerHTML = '<p class="error-content">Error al cargar documentos.</p>';
+        contenedor.innerHTML = '<p class="error-contenido">Error al cargar documentos.</p>';
     }
 }
 
 // Eliminar álbum
-async function deleteAlbum(albumId) {
+async function eliminarAlbum(idAlbum) {
     try {
-        await api.eliminar(`/api/albums/${albumId}`);
-        loadAlbumsList();
-        loadStats();
+        await api.eliminar(`/api/albumes/${idAlbum}`);
+        cargarListaAlbumes();
+        cargarEstadisticas();
     } catch (error) {
         console.error('Error al eliminar álbum:', error);
         alert('Error al eliminar el álbum. Por favor, intenta nuevamente.');
@@ -431,11 +431,11 @@ async function deleteAlbum(albumId) {
 }
 
 // Eliminar documento
-async function deleteDocument(docId) {
+async function eliminarDocumento(idDoc) {
     try {
-        await api.eliminar(`/api/docs/${docId}`);
-        loadDocsList();
-        loadStats();
+        await api.eliminar(`/api/documentos/${idDoc}`);
+        cargarListaDocumentos();
+        cargarEstadisticas();
     } catch (error) {
         console.error('Error al eliminar documento:', error);
         alert('Error al eliminar el documento. Por favor, intenta nuevamente.');
@@ -443,11 +443,11 @@ async function deleteDocument(docId) {
 }
 
 // Cargar listas cuando se abre la pestaña de gestión
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (btn.dataset.tab === 'gestionar') {
-            loadAlbumsList();
-            loadDocsList();
+document.querySelectorAll('.tab-btn').forEach(boton => {
+    boton.addEventListener('click', () => {
+        if (boton.dataset.tab === 'gestionar') {
+            cargarListaAlbumes();
+            cargarListaDocumentos();
         }
     });
 });
