@@ -10,7 +10,7 @@ class RepositorioAlbum extends RepositorioBase {
      */
     async crear(album) {
         return this.ejecutar(
-            'INSERT INTO albums (id, titulo, fecha, descripcion, fotos) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO albumes (id, titulo, fecha, descripcion, fotos) VALUES (?, ?, ?, ?, ?)',
             [album.id, album.titulo, album.fecha, album.descripcion, JSON.stringify(album.fotos)]
         );
     }
@@ -19,7 +19,7 @@ class RepositorioAlbum extends RepositorioBase {
      * Obtiene todos los álbumes ordenados por fecha descendente
      */
     async obtenerTodos() {
-        const albumes = await super.obtenerTodos('SELECT * FROM albums ORDER BY fecha DESC', []);
+        const albumes = await super.obtenerTodos('SELECT * FROM albumes ORDER BY fecha DESC', []);
         return albumes.map((album) => ({
             ...album,
             fotos: album.fotos ? JSON.parse(album.fotos) : [],
@@ -30,7 +30,7 @@ class RepositorioAlbum extends RepositorioBase {
      * Busca un álbum por ID
      */
     async obtenerPorId(id) {
-        const album = await this.obtenerUno('SELECT * FROM albums WHERE id = ?', [id]);
+        const album = await this.obtenerUno('SELECT * FROM albumes WHERE id = ?', [id]);
         if (album && album.fotos) {
             album.fotos = JSON.parse(album.fotos);
         }
@@ -41,7 +41,7 @@ class RepositorioAlbum extends RepositorioBase {
      * Elimina un álbum por ID
      */
     async eliminarPorId(id) {
-        return this.ejecutar('DELETE FROM albums WHERE id = ?', [id]);
+        return this.ejecutar('DELETE FROM albumes WHERE id = ?', [id]);
     }
 }
 

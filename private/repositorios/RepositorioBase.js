@@ -17,10 +17,10 @@ class RepositorioBase {
      * @returns {Promise<Object|null>} Fila encontrada o null
      */
     obtenerUno(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.get(sql, params, (err, row) => {
-                if (err) reject(err);
-                else resolve(row || null);
+        return new Promise((resolver, rechazar) => {
+            this.db.get(sql, params, (error, fila) => {
+                if (error) rechazar(error);
+                else resolver(fila || null);
             });
         });
     }
@@ -32,10 +32,10 @@ class RepositorioBase {
      * @returns {Promise<Array>} Array de filas
      */
     obtenerTodos(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.all(sql, params, (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows || []);
+        return new Promise((resolver, rechazar) => {
+            this.db.all(sql, params, (error, filas) => {
+                if (error) rechazar(error);
+                else resolver(filas || []);
             });
         });
     }
@@ -44,14 +44,14 @@ class RepositorioBase {
      * Ejecuta una consulta de modificación (INSERT, UPDATE, DELETE)
      * @param {string} sql - Consulta SQL
      * @param {Array} params - Parámetros de la consulta
-     * @returns {Promise<Object>} Objeto con lastID y changes
+     * @returns {Promise<Object>} Objeto con ultimoID y cambios
      */
     ejecutar(sql, params = []) {
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, params, function (err) {
-                if (err) reject(err);
+        return new Promise((resolver, rechazar) => {
+            this.db.run(sql, params, function (error) {
+                if (error) rechazar(error);
                 else
-                    resolve({
+                    resolver({
                         ultimoID: this.lastID,
                         cambios: this.changes,
                     });

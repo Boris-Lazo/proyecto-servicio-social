@@ -12,52 +12,52 @@ class ControladorDocumento {
     /**
      * Crear un nuevo documento
      */
-    async crearDocumento(req, res, next) {
+    async crearDocumento(peticion, respuesta, siguiente) {
         try {
-            const { titulo, mes } = req.body;
-            const archivo = req.file;
+            const { titulo, mes } = peticion.body;
+            const archivo = peticion.file;
             const resultado = await this.servicioDocumento.crearDocumento({ titulo, mes }, archivo);
-            res.json({ ok: true, ...resultado });
+            respuesta.json({ ok: true, ...resultado });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Listar todos los documentos
      */
-    async listarDocumentos(req, res, next) {
+    async listarDocumentos(peticion, respuesta, siguiente) {
         try {
             const documentos = await this.servicioDocumento.listarDocumentos();
-            res.json(documentos);
+            respuesta.json(documentos);
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Eliminar un documento
      */
-    async eliminarDocumento(req, res, next) {
+    async eliminarDocumento(peticion, respuesta, siguiente) {
         try {
-            const { id } = req.params;
+            const { id } = peticion.params;
             await this.servicioDocumento.eliminarDocumento(parseInt(id, 10));
-            res.json({ ok: true, mensaje: 'Documento eliminado' });
+            respuesta.json({ ok: true, mensaje: 'Documento eliminado' });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Obtener thumbnail de un documento
      */
-    async obtenerMiniatura(req, res, next) {
+    async obtenerMiniatura(peticion, respuesta, siguiente) {
         try {
-            const { nombreArchivo } = req.params;
+            const { nombreArchivo } = peticion.params;
             const rutaMiniatura = await this.servicioDocumento.obtenerMiniatura(nombreArchivo);
-            res.sendFile(rutaMiniatura);
+            respuesta.sendFile(rutaMiniatura);
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 }

@@ -5,8 +5,8 @@ function $(id) { return document.getElementById(id); }
 
 // ---------- MOSTRAR/OCULTAR CONTRASEÑA ----------
 $('show-password').addEventListener('change', (evento) => {
-    const entradaPassword = $('password');
-    entradaPassword.type = evento.target.checked ? 'text' : 'password';
+    const entradaContrasena = $('contrasena');
+    entradaContrasena.type = evento.target.checked ? 'text' : 'password';
 });
 
 // ---------- LOGIN ----------
@@ -14,7 +14,7 @@ $('login-form').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
     const correo = $('usuario').value.trim();
-    const contrasena = $('password').value;
+    const contrasena = $('contrasena').value;
 
     if (!correo || !contrasena) {
         alert('Por favor completa todos los campos');
@@ -22,7 +22,7 @@ $('login-form').addEventListener('submit', async (evento) => {
     }
 
     try {
-        const datos = await api.enviar('/api/login', { usuario: correo, contrasena: contrasena });
+        const datos = await api.enviar('/api/entrar', { usuario: correo, contrasena: contrasena });
 
         localStorage.setItem('token', datos.token);
         localStorage.setItem('usuario', correo);

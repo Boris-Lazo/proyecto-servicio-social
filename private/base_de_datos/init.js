@@ -5,11 +5,11 @@ const sqlite = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const archivoDb = path.join(__dirname, 'escuela.sqlite');
 
-module.exports = new Promise((resolve, reject) => {
-  const db = new sqlite.Database(archivoDb, (err) => {
-    if (err) {
-      console.error('[DB] Error al abrir base de datos:', err);
-      return reject(err);
+module.exports = new Promise((resolverGlobal, rechazarGlobal) => {
+  const db = new sqlite.Database(archivoDb, (errorConexion) => {
+    if (errorConexion) {
+      console.error('[DB] Error al abrir base de datos:', errorConexion);
+      return rechazarGlobal(errorConexion);
     }
 
     db.serialize(() => {
@@ -55,12 +55,12 @@ module.exports = new Promise((resolve, reject) => {
       if (predeterminados.length > 0) {
         const sentencia = db.prepare('INSERT OR IGNORE INTO usuarios (usuario, clave_hash) VALUES (?, ?)');
         const promesas = predeterminados.map(u => {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolver, rechazar) => {
             bcrypt.hash(u.clave, 10, (err, hash) => {
-              if (err) return reject(err);
+              if (err) return rechazar(err);
               sentencia.run(u.correo, hash, (err) => {
-                if (err) return reject(err);
-                resolve();
+                if (err) return rechazar(err);
+                resolver();
               });
             });
           });
@@ -72,7 +72,7 @@ module.exports = new Promise((resolve, reject) => {
               if (err) {
                 console.error('[DB] Error al finalizar sentencia:', err);
                 db.close();
-                return reject(err);
+                return rechazarGlobal(err);
               }
               cerrarYResolver();
             });
@@ -80,7 +80,7 @@ module.exports = new Promise((resolve, reject) => {
           .catch(err => {
             console.error('[DB] Error al insertar usuarios por defecto:', err);
             db.close();
-            reject(err);
+            rechazarGlobal(err);
           });
       } else {
         cerrarYResolver();
@@ -91,10 +91,10 @@ module.exports = new Promise((resolve, reject) => {
       db.close((err) => {
         if (err) {
           console.error('[DB] Error al cerrar:', err);
-          reject(err);
+          rechazarGlobal(err);
         } else {
           console.log('[DB] Base de datos inicializada');
-          resolve();
+          resolverGlobal();
         }
       });
     }

@@ -15,7 +15,7 @@ const router = express.Router();
 
 // Rutas vinculadas a la instancia del controlador
 router.post(
-    '/login',
+    '/entrar',
     limitadorSesion,
     validador(esquemaSesion),
     (peticion, respuesta, siguiente) => controladorAutenticacion.iniciarSesion(peticion, respuesta, siguiente)

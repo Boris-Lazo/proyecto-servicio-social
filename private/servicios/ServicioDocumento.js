@@ -32,14 +32,14 @@ class ServicioDocumento {
             throw new ErrorValidacion('No se envió archivo');
         }
 
-        const documento = { titulo, mes, nombreArchivo: archivo.filename };
+        const documento = { titulo, mes, nombre_archivo: archivo.filename };
         await this.repositorioDocumento.crear(documento);
 
         this.generarMiniatura(archivo.filename).catch(error => {
             console.error(`Error generando miniatura para ${archivo.filename}:`, error);
         });
 
-        return { nombreArchivo: archivo.filename };
+        return { nombre_archivo: archivo.filename };
     }
 
     /**

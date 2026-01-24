@@ -1,132 +1,95 @@
-// documentos.js - Página dinámica de documentos
+// documentos.js – Lógica para la página de documentos de rendición de cuentas
 
-// ---------- VARIABLES GLOBALES ----------
+// ---------- UTILIDADES ----------
+function $(id) { return document.getElementById(id); }
+
+// ---------- ESTADO GLOBAL ----------
 let documentos = [];
-
-// ---------- ELEMENTOS DEL DOM ----------
-const contenedorDocs = document.getElementById('documentos-container');
 
 // ---------- CARGAR DOCUMENTOS ----------
 async function cargarDocumentos() {
+    const contenedor = $('documentos-grid');
+
     try {
-        contenedorDocs.innerHTML = '<div class="loading-message">Cargando documentos...</div>';
         documentos = await api.obtener('/api/documentos');
 
         if (documentos.length === 0) {
-            contenedorDocs.innerHTML = '<div class="empty-message">No hay documentos publicados aún.<br>Vuelve pronto para consultar los documentos de rendición de cuentas.</div>';
+            contenedor.innerHTML = `
+                <div class="no-documentos">
+                    <img src="img/docs-empty.svg" alt="No hay documentos" class="empty-icon">
+                    <p>No hay documentos publicados aún.</p>
+                    <p class="subtext">Vuelve pronto para consultar los documentos de rendición de cuentas.</p>
+                </div>
+            `;
             return;
         }
 
-        renderizarDocumentos();
+        renderizarDocumentos(documentos);
+
     } catch (error) {
         console.error('Error al cargar documentos:', error);
-        contenedorDocs.innerHTML = '<div class="error-message">Error al cargar los documentos.<br>Por favor, intenta nuevamente más tarde.</div>';
+        contenedor.innerHTML = '<p class="error-msg">Error al cargar los documentos. Por favor, intenta más tarde.</p>';
     }
 }
 
-// ---------- ORGANIZAR DOCUMENTOS POR AÑO Y MES ----------
-function organizarDocumentosPorFecha() {
-    const organizados = {};
-
-    documentos.forEach(doc => {
-        const [anio, mes] = doc.mes.split('-');
-
-        if (!organizados[anio]) {
-            organizados[anio] = {};
-        }
-
-        if (!organizados[anio][mes]) {
-            organizados[anio][mes] = [];
-        }
-
-        organizados[anio][mes].push(doc);
-    });
-
-    return organizados;
-}
-
 // ---------- RENDERIZAR DOCUMENTOS ----------
-function renderizarDocumentos() {
-    contenedorDocs.innerHTML = '';
+function renderizarDocumentos(lista) {
+    const contenedor = $('documentos-grid');
+    contenedor.innerHTML = '';
 
-    const organizados = organizarDocumentosPorFecha();
-
-    // Ordenar años de más reciente a más antiguo
-    const anios = Object.keys(organizados).sort((a, b) => b - a);
-
-    anios.forEach(anio => {
-        const seccionAnio = document.createElement('div');
-        seccionAnio.className = 'year-section';
-
-        const encabezadoAnio = document.createElement('h2');
-        encabezadoAnio.className = 'year-header';
-        encabezadoAnio.textContent = `📅 ${anio}`;
-        seccionAnio.appendChild(encabezadoAnio);
-
-        // Ordenar meses de más reciente a más antiguo
-        const meses = Object.keys(organizados[anio]).sort((a, b) => b - a);
-
-        meses.forEach(mes => {
-            const documentosMes = organizados[anio][mes];
-            const nombreMes = obtenerNombreMes(parseInt(mes));
-
-            const seccionMes = document.createElement('div');
-            seccionMes.className = 'month-section';
-
-            const encabezadoMes = document.createElement('h3');
-            encabezadoMes.className = 'month-header';
-            encabezadoMes.textContent = `${nombreMes} ${anio}`;
-            seccionMes.appendChild(encabezadoMes);
-
-            const cuadriculaDocs = document.createElement('div');
-            cuadriculaDocs.className = 'documentos-grid';
-
-            documentosMes.forEach(doc => {
-                const tarjeta = crearTarjetaDocumento(doc);
-                cuadriculaDocs.appendChild(tarjeta);
-            });
-
-            seccionMes.appendChild(cuadriculaDocs);
-            seccionAnio.appendChild(seccionMes);
-        });
-
-        contenedorDocs.appendChild(seccionAnio);
+    lista.forEach(doc => {
+        const tarjeta = crearTarjetaDocumento(doc);
+        contenedor.appendChild(tarjeta);
     });
 }
 
 // ---------- CREAR TARJETA DE DOCUMENTO ----------
 function crearTarjetaDocumento(doc) {
-    const enlaceTarjeta = document.createElement('a');
-    enlaceTarjeta.href = `/api/docs/file/${doc.nombre_archivo}`;
-    enlaceTarjeta.target = '_blank';
-    enlaceTarjeta.className = 'documento-tarjeta-link';
-
-    const tituloSeguro = sanearHTML(doc.titulo);
-    enlaceTarjeta.setAttribute('aria-label', `Ver documento ${tituloSeguro}`);
-
-    // URL de la miniatura
-    const urlMiniatura = `/api/documentos/miniatura/${doc.nombre_archivo}`;
-
-    enlaceTarjeta.innerHTML = `
-        <article class="documento-tarjeta">
-            <div class="documento-preview">
-                <img src="${urlMiniatura}" alt="Vista previa de ${tituloSeguro}" loading="lazy">
-            </div>
-            <h4>${tituloSeguro}</h4>
-        </article>
-    `;
-
-    return enlaceTarjeta;
-}
-
-// ---------- OBTENER NOMBRE DEL MES ----------
-function obtenerNombreMes(numeroMes) {
-    const meses = [
+    const [anio, mes] = doc.mes.split('-');
+    const nombresMeses = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
-    return meses[numeroMes - 1];
+    const nombreMes = nombresMeses[parseInt(mes) - 1];
+
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'documento-tarjeta';
+
+    const tituloSeguro = sanearHTML(doc.titulo);
+
+    // Enlace que envuelve toda la tarjeta
+    const enlaceTarjeta = document.createElement('a');
+    enlaceTarjeta.href = `/api/documentos/archivo/${doc.nombre_archivo}`;
+    enlaceTarjeta.target = '_blank';
+    enlaceTarjeta.className = 'documento-link';
+    enlaceTarjeta.setAttribute('aria-label', `Ver documento: ${tituloSeguro}`);
+
+    // Cuerpo de la tarjeta
+    const contenido = `
+        <div class="documento-header">
+            <span class="badge-pdf">PDF</span>
+            <span class="doc-anio">${anio}</span>
+        </div>
+        <div class="documento-cuerpo">
+            <div class="documento-icono">
+                <img src="/api/documentos/miniatura/${doc.nombre_archivo}" alt="Icono PDF"
+                     onerror="this.src='img/pdf-fallback.png'">
+            </div>
+            <h3>${tituloSeguro}</h3>
+            <p class="documento-mes">${nombreMes}</p>
+        </div>
+        <div class="documento-footer">
+            <span class="btn-ver">Ver Documento</span>
+        </div>
+    `;
+
+    enlaceTarjeta.innerHTML = contenido;
+    tarjeta.appendChild(enlaceTarjeta);
+
+    return tarjeta;
 }
 
 // ---------- INICIALIZAR ----------
-cargarDocumentos();
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDocumentos();
+});

@@ -12,39 +12,39 @@ class ControladorAlbum {
     /**
      * Crear un nuevo álbum
      */
-    async crearAlbum(req, res, next) {
+    async crearAlbum(peticion, respuesta, siguiente) {
         try {
-            const { titulo, fecha, descripcion } = req.body;
-            const archivos = req.files;
+            const { titulo, fecha, descripcion } = peticion.body;
+            const archivos = peticion.files;
             const album = await this.servicioAlbum.crearAlbum({ titulo, fecha, descripcion }, archivos);
-            res.status(201).json({ ok: true, album });
+            respuesta.status(201).json({ ok: true, album });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Listar todos los álbumes
      */
-    async listarAlbumes(req, res, next) {
+    async listarAlbumes(peticion, respuesta, siguiente) {
         try {
             const albumes = await this.servicioAlbum.listarAlbumes();
-            res.json(albumes);
+            respuesta.json(albumes);
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Eliminar un álbum
      */
-    async eliminarAlbum(req, res, next) {
+    async eliminarAlbum(peticion, respuesta, siguiente) {
         try {
-            const { id } = req.params;
+            const { id } = peticion.params;
             await this.servicioAlbum.eliminarAlbum(id);
-            res.json({ ok: true, mensaje: 'Álbum eliminado' });
+            respuesta.json({ ok: true, mensaje: 'Álbum eliminado' });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 }

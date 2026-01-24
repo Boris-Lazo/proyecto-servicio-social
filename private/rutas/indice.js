@@ -5,9 +5,9 @@ const rutasDocumentos = require('./documentos');
 
 const router = express.Router();
 
-// Montar todas las rutas
+// Montar todas las rutas en español
 router.use('/api', rutasAutenticacion);
-router.use('/api/albums', rutasAlbumes);
-router.use('/api/docs', rutasDocumentos);
+router.use('/api/albumes', rutasAlbumes);
+router.use('/api/documentos', rutasDocumentos);
 
 module.exports = router;

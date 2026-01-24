@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { configuracionApp } = require('../contenedor');
 
 /**
  * Filtro para validar que solo se suban imágenes
@@ -30,7 +31,7 @@ const filtroPdf = (peticion, archivo, cb) => {
  */
 const almacenamientoAlbum = multer.diskStorage({
     destination: (_peticion, _archivo, cb) => {
-        const carpetaTemporal = path.join(__dirname, '..', 'upload', 'temp_albums');
+        const carpetaTemporal = configuracionApp.rutas.albumesTemporales;
         fs.mkdirSync(carpetaTemporal, { recursive: true });
         cb(null, carpetaTemporal);
     },
@@ -45,13 +46,13 @@ const almacenamientoAlbum = multer.diskStorage({
  */
 const almacenamientoDocumento = multer.diskStorage({
     destination: (_peticion, _archivo, cb) => {
-        const carpetaDocs = path.join(__dirname, '..', 'upload', 'docs');
+        const carpetaDocs = configuracionApp.rutas.documentos;
         fs.mkdirSync(carpetaDocs, { recursive: true });
         cb(null, carpetaDocs);
     },
     filename: (_peticion, archivo, cb) => {
         const seguro = archivo.originalname.replace(/[^a-z0-9.-]/gi, '_');
-        cb(null, `${Date.now()} - ${seguro}`);
+        cb(null, `${Date.now()}_${seguro}`);
     },
 });
 

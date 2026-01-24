@@ -71,7 +71,10 @@ document.querySelectorAll('.tab-btn').forEach(boton => {
 
         // Activar el botón y contenido seleccionado
         boton.classList.add('active');
-        document.getElementById(`tab-${idDestino}`).classList.add('active');
+        const content = document.getElementById(`tab-${idDestino}`);
+        if (content) {
+            content.classList.add('active');
+        }
     });
 });
 
@@ -80,11 +83,11 @@ async function cargarEstadisticas() {
     try {
         // Cargar álbumes
         const albumes = await api.obtener('/api/albumes');
-        $('stat-albums').textContent = albumes.length || 0;
+        $('stat-albumes').textContent = albumes.length || 0;
 
         // Contar fotos totales
         const fotosTotales = albumes.reduce((suma, album) => suma + (album.fotos?.length || 0), 0);
-        $('stat-photos').textContent = fotosTotales;
+        $('stat-fotos').textContent = fotosTotales;
 
         // Última actualización
         if (albumes.length > 0) {
@@ -94,7 +97,7 @@ async function cargarEstadisticas() {
 
         // Cargar documentos
         const documentos = await api.obtener('/api/documentos');
-        $('stat-docs').textContent = documentos.length || 0;
+        $('stat-documentos').textContent = documentos.length || 0;
     } catch (error) {
         console.error('Error al cargar estadísticas:', error);
     }
@@ -116,7 +119,7 @@ $('fotos').addEventListener('change', (evento) => {
         return;
     }
 
-    etiquetaArchivo.textContent = `${archivos.length} archivo(s) seleccionado(s)平衡`;
+    etiquetaArchivo.textContent = `${archivos.length} archivo(s) seleccionado(s)`;
     $('preview').innerHTML = '';
 
     archivos.forEach(archivo => {
@@ -289,19 +292,22 @@ document.addEventListener('keydown', (evento) => {
 });
 
 // ---------- CERRAR SESIÓN ----------
-$('btn-logout').addEventListener('click', () => {
-    mostrarModal(
-        '🚪 Cerrar Sesión',
-        '¿Estás seguro de que deseas cerrar sesión?',
-        'Perderás cualquier progreso no guardado.',
-        'Cerrar Sesión',
-        () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('usuario');
-            window.location.href = 'login.html';
-        }
-    );
-});
+const btnSalir = $('btn-salir');
+if (btnSalir) {
+    btnSalir.addEventListener('click', () => {
+        mostrarModal(
+            '🚪 Cerrar Sesión',
+            '¿Estás seguro de que deseas cerrar sesión?',
+            'Perderás cualquier progreso no guardado.',
+            'Cerrar Sesión',
+            () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('usuario');
+                window.location.href = 'login.html';
+            }
+        );
+    });
+}
 
 // ---------- GESTIÓN DE CONTENIDO ----------
 
@@ -341,9 +347,10 @@ async function cargarListaAlbumes() {
         // Agregar event listeners a botones de eliminar
         contenedor.querySelectorAll('.btn-delete').forEach(boton => {
             boton.addEventListener('click', () => {
-                const idAlbum = boton.dataset.idAlbum;
+                const idAlbum = boton.dataset.albumId;
                 const tituloAlbum = boton.closest('.contenido-item').querySelector('h4').textContent;
-                const conteoFotos = albumes.find(a => a.id === idAlbum).fotos.length;
+                const albumEncontrado = albumes.find(a => a.id === idAlbum);
+                const conteoFotos = albumEncontrado ? albumEncontrado.fotos.length : 0;
 
                 mostrarModal(
                     '🗑️ Eliminar Álbum',
@@ -399,7 +406,7 @@ async function cargarListaDocumentos() {
         // Agregar event listeners a botones de eliminar
         contenedor.querySelectorAll('.btn-delete').forEach(boton => {
             boton.addEventListener('click', () => {
-                const idDoc = boton.dataset.idDoc;
+                const idDoc = boton.dataset.docId;
                 const tituloDoc = boton.closest('.contenido-item').querySelector('h4').textContent;
 
                 mostrarModal(

@@ -13,11 +13,11 @@ router.post(
     autenticacion,
     subidaAlbum.array('fotos', 30),
     validador(esquemaAlbum),
-    (req, res, next) => controladorAlbum.crearAlbum(req, res, next)
+    (peticion, respuesta, siguiente) => controladorAlbum.crearAlbum(peticion, respuesta, siguiente)
 );
 
-router.get('/', (req, res, next) => controladorAlbum.listarAlbumes(req, res, next));
+router.get('/', (peticion, respuesta, siguiente) => controladorAlbum.listarAlbumes(peticion, respuesta, siguiente));
 
-router.delete('/:id', autenticacion, (req, res, next) => controladorAlbum.eliminarAlbum(req, res, next));
+router.delete('/:id', autenticacion, (peticion, respuesta, siguiente) => controladorAlbum.eliminarAlbum(peticion, respuesta, siguiente));
 
 module.exports = router;

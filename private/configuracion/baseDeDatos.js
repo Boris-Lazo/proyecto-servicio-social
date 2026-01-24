@@ -12,7 +12,7 @@ class BaseDeDatos {
     /**
      * Obtiene la instancia de la base de datos
      */
-    connect() {
+    conectar() {
         if (!this.instancia) {
             this.instancia = new sqlite3.Database(configuracionApp.rutas.baseDeDatos, (err) => {
                 if (err) {
@@ -29,14 +29,14 @@ class BaseDeDatos {
     /**
      * Cierra la conexión
      */
-    async close() {
+    async cerrar() {
         if (this.instancia) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolver, rechazar) => {
                 this.instancia.close((err) => {
-                    if (err) reject(err);
+                    if (err) rechazar(err);
                     else {
                         this.instancia = null;
-                        resolve();
+                        resolver();
                     }
                 });
             });

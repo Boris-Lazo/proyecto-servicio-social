@@ -30,7 +30,7 @@ const clienteApi = {
         });
 
         // Gestionar sesiones expiradas o no autorizadas (redirigir al login).
-        if (respuesta.status === 401 && !puntoEntrada.includes('/login')) {
+        if (respuesta.status === 401 && !puntoEntrada.includes('/entrar')) {
             localStorage.removeItem('token');
             localStorage.removeItem('usuario');
             window.location.href = 'login.html';

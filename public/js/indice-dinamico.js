@@ -5,15 +5,15 @@ async function cargarUltimoAlbum() {
     const container = document.getElementById('latest-album-container');
 
     try {
-        const albums = await api.obtener('/api/albums');
+        const albumes = await api.obtener('/api/albumes');
 
-        if (albums.length === 0) {
+        if (albumes.length === 0) {
             container.innerHTML = '<p class="no-contenido">No hay eventos publicados aún.</p>';
             return;
         }
 
         // Tomar el primer álbum (más reciente)
-        const ultimoAlbum = albums[0];
+        const ultimoAlbum = albumes[0];
         renderizarVistaPreviaAlbum(ultimoAlbum, container);
 
     } catch (error) {
@@ -108,15 +108,15 @@ async function cargarUltimoDocumento() {
     const container = document.getElementById('latest-doc-container');
 
     try {
-        const docs = await api.obtener('/api/docs');
+        const documentos = await api.obtener('/api/documentos');
 
-        if (docs.length === 0) {
+        if (documentos.length === 0) {
             container.innerHTML = '<p class="no-contenido">No hay documentos publicados aún.</p>';
             return;
         }
 
         // Tomar el primer documento (más reciente)
-        const ultimoDoc = docs[0];
+        const ultimoDoc = documentos[0];
         renderizarVistaPreviaDocumento(ultimoDoc, container);
 
     } catch (error) {
@@ -127,11 +127,11 @@ async function cargarUltimoDocumento() {
 
 // ---------- RENDERIZAR PREVIEW DE DOCUMENTO ----------
 function renderizarVistaPreviaDocumento(doc, container) {
-    const [year, month] = doc.mes.split('-');
-    const nombreMes = obtenerNombreMes(parseInt(month));
+    const [anio, mes] = doc.mes.split('-');
+    const nombreMes = obtenerNombreMes(parseInt(mes));
     const tituloSeguro = sanearHTML(doc.titulo);
-    const urlDescarga = `/api/docs/file/${doc.filename}`;
-    const urlMiniatura = `/api/docs/thumbnail/${doc.filename}`;
+    const urlDescarga = `/api/documentos/archivo/${doc.nombre_archivo}`;
+    const urlMiniatura = `/api/documentos/miniatura/${doc.nombre_archivo}`;
 
     container.innerHTML = `
         <a href="${urlDescarga}" target="_blank" class="documento-tarjeta-link-index" aria-label="Ver documento ${tituloSeguro}">
@@ -140,7 +140,7 @@ function renderizarVistaPreviaDocumento(doc, container) {
                     <img src="${urlMiniatura}" alt="Vista previa de ${tituloSeguro}" loading="lazy">
                 </div>
                 <h4>${tituloSeguro}</h4>
-                <p class="preview-fecha">${nombreMes} ${year}</p>
+                <p class="preview-fecha">${nombreMes} ${anio}</p>
             </div>
         </a>
         <div style="margin-top: 1rem; text-align: left;">

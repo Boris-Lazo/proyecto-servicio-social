@@ -8,10 +8,10 @@ class RepositorioDocumento extends RepositorioBase {
      * Crea un nuevo documento
      */
     async crear(doc) {
-        return this.ejecutar('INSERT INTO docs (titulo, mes, filename) VALUES (?, ?, ?)', [
+        return this.ejecutar('INSERT INTO documentos (titulo, mes, nombre_archivo) VALUES (?, ?, ?)', [
             doc.titulo,
             doc.mes,
-            doc.filename,
+            doc.nombre_archivo,
         ]);
     }
 
@@ -19,21 +19,21 @@ class RepositorioDocumento extends RepositorioBase {
      * Obtiene todos los documentos ordenados por mes descendente
      */
     async obtenerTodos() {
-        return super.obtenerTodos('SELECT * FROM docs ORDER BY mes DESC', []);
+        return super.obtenerTodos('SELECT * FROM documentos ORDER BY mes DESC', []);
     }
 
     /**
      * Busca un documento por ID
      */
     async obtenerPorId(id) {
-        return this.obtenerUno('SELECT * FROM docs WHERE id = ?', [id]);
+        return this.obtenerUno('SELECT * FROM documentos WHERE id = ?', [id]);
     }
 
     /**
      * Elimina un documento por ID
      */
     async eliminarPorId(id) {
-        return this.ejecutar('DELETE FROM docs WHERE id = ?', [id]);
+        return this.ejecutar('DELETE FROM documentos WHERE id = ?', [id]);
     }
 }
 

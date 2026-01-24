@@ -1,7 +1,7 @@
 // Configuración
 const configuracionApp = require('./configuracion/configuracionApp');
 const gestorBaseDatos = require('./configuracion/baseDeDatos');
-const db = gestorBaseDatos.connect();
+const db = gestorBaseDatos.conectar();
 
 // Repositorios
 const RepositorioUsuario = require('./repositorios/RepositorioUsuario');

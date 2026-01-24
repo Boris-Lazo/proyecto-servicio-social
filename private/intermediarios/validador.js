@@ -7,15 +7,15 @@ const { ErrorValidacion } = require('../errores/indice');
  * @returns {Function} Middleware de Express
  */
 const validador = (esquema) => {
-    return (req, res, next) => {
+    return (peticion, respuesta, siguiente) => {
         try {
             // Validar el body de la petición
-            const validado = esquema.parse(req.body);
+            const validado = esquema.parse(peticion.body);
 
-            // Reemplazar req.body con los datos validados y transformados
-            req.body = validado;
+            // Reemplazar peticion.body con los datos validados y transformados
+            peticion.body = validado;
 
-            next();
+            siguiente();
         } catch (error) {
             if (error instanceof z.ZodError) {
                 // Formatear errores de Zod de manera legible
@@ -24,9 +24,9 @@ const validador = (esquema) => {
                     mensaje: err.message,
                 }));
 
-                next(new ErrorValidacion('Datos de entrada inválidos', detalles));
+                siguiente(new ErrorValidacion('Datos de entrada inválidos', detalles));
             } else {
-                next(error);
+                siguiente(error);
             }
         }
     };

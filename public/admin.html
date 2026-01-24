@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración – Centro Escolar Cantón El Amatal</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/estilos.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="icon" href="img/icoSV.ico" type="image/x-icon">
 </head>
@@ -27,7 +27,7 @@
 
             <!-- Menú de navegación -->
             <nav id="admin-nav-menu" class="admin-actions">
-                <button id="btn-logout" class="btn-danger">🚪 Cerrar sesión</button>
+                <button id="btn-salir" class="btn-danger">🚪 Cerrar sesión</button>
             </nav>
         </div>
     </header>
@@ -41,28 +41,28 @@
                 <div class="stat-card">
                     <div class="stat-icon">📸</div>
                     <div class="stat-info">
-                        <h3 id="stat-albums">0</h3>
+                        <h3 id="stat-albumes">0</h3>
                         <p>Álbumes publicados</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📄</div>
                     <div class="stat-info">
-                        <h3 id="stat-docs">0</h3>
+                        <h3 id="stat-documentos">0</h3>
                         <p>Documentos subidos</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">🖼️</div>
                     <div class="stat-info">
-                        <h3 id="stat-photos">0</h3>
+                        <h3 id="stat-fotos">0</h3>
                         <p>Fotos totales</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">📅</div>
                     <div class="stat-info">
-                        <h3 id="stat-date">--</h3>
+                        <h3 id="stat-fecha">--</h3>
                         <p>Última actualización</p>
                     </div>
                 </div>
@@ -72,13 +72,13 @@
         <!-- Sistema de pestañas -->
         <section class="admin-tabs-section">
             <div class="tabs-header">
-                <button class="tab-btn active" data-tab="albums">📸 Subir Álbum</button>
+                <button class="tab-btn active" data-tab="albumes">📸 Subir Álbum</button>
                 <button class="tab-btn" data-tab="documentos">📄 Subir Documento</button>
                 <button class="tab-btn" data-tab="gestionar">⚙️ Gestionar Contenido</button>
             </div>
 
             <!-- Tab: Álbumes -->
-            <div class="tab-content active" id="tab-albums">
+            <div class="tab-contenido active" id="tab-albumes">
                 <div class="admin-card">
                     <h3>📤 Publicar Nuevo Álbum</h3>
                     <form id="album-form" class="admin-form">
@@ -125,7 +125,7 @@
             </div>
 
             <!-- Tab: Documentos -->
-            <div class="tab-content" id="tab-documentos">
+            <div class="tab-contenido" id="tab-documentos">
                 <div class="admin-card">
                     <h3>📤 Subir Nuevo Documento</h3>
                     <form id="doc-form" class="admin-form">
@@ -164,7 +164,7 @@
             </div>
 
             <!-- Tab: Gestionar Contenido -->
-            <div class="tab-content" id="tab-gestionar">
+            <div class="tab-contenido" id="tab-gestionar">
                 <div class="admin-card">
                     <h3>📸 Álbumes Publicados</h3>
                     <div id="lista-albumes" class="content-list">
@@ -197,7 +197,7 @@
                 <button id="modal-confirm" class="btn-modal btn-modal-confirm">Confirmar</button>
             </div>
         </div>
-    </div>>
+    </div>
 
     <!-- Scripts -->
     <script src="js/anio-dinamico.js"></script>

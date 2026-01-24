@@ -12,54 +12,54 @@ class ControladorAutenticacion {
     /**
      * Login de usuario
      */
-    async iniciarSesion(req, res, next) {
+    async iniciarSesion(peticion, respuesta, siguiente) {
         try {
-            const { usuario, contrasena } = req.body;
+            const { usuario, contrasena } = peticion.body;
             console.log('[LOGIN] Intento de login para:', usuario);
             const token = await this.servicioAutenticacion.iniciarSesion(usuario, contrasena);
-            res.json({ token });
+            respuesta.json({ token });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Cambio de contraseña
      */
-    async cambiarContrasena(req, res, next) {
+    async cambiarContrasena(peticion, respuesta, siguiente) {
         try {
-            const { viejaClave, nuevaClave } = req.body;
-            const correo = req.user;
+            const { viejaClave, nuevaClave } = peticion.body;
+            const correo = peticion.correo;
             await this.servicioAutenticacion.cambiarContrasena(correo, viejaClave, nuevaClave);
-            res.json({ ok: true, mensaje: 'Contraseña cambiada' });
+            respuesta.json({ ok: true, mensaje: 'Contraseña cambiada' });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Solicitud de recuperación
      */
-    async recuperar(req, res, next) {
+    async recuperar(peticion, respuesta, siguiente) {
         try {
-            const { correo } = req.body;
+            const { correo } = peticion.body;
             await this.servicioAutenticacion.solicitarRestablecimiento(correo);
-            res.json({ ok: true, mensaje: 'Si el correo existe, se enviará un enlace.' });
+            respuesta.json({ ok: true, mensaje: 'Si el correo existe, se enviará un enlace.' });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 
     /**
      * Reset de contraseña
      */
-    async restablecerContrasena(req, res, next) {
+    async restablecerContrasena(peticion, respuesta, siguiente) {
         try {
-            const { tokenTemporal, nuevaClave } = req.body;
+            const { tokenTemporal, nuevaClave } = peticion.body;
             await this.servicioAutenticacion.restablecerContrasena(tokenTemporal, nuevaClave);
-            res.json({ ok: true, mensaje: 'Contraseña actualizada' });
+            respuesta.json({ ok: true, mensaje: 'Contraseña actualizada' });
         } catch (error) {
-            next(error);
+            siguiente(error);
         }
     }
 }

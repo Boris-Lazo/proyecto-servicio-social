@@ -9,11 +9,11 @@ const configuracionApp = {
 
     // Rutas de almacenamiento
     rutas: {
-        baseSubida: path.join(__dirname, '..', 'upload'),
-        albumes: path.join(__dirname, '..', 'upload', 'albums'),
-        documentos: path.join(__dirname, '..', 'upload', 'docs'),
-        albumesTemporales: path.join(__dirname, '..', 'upload', 'temp_albums'),
-        miniaturas: path.join(__dirname, '..', 'upload', 'thumbnails'),
+        baseSubida: path.join(__dirname, '..', 'subidas'),
+        albumes: path.join(__dirname, '..', 'subidas', 'albumes'),
+        documentos: path.join(__dirname, '..', 'subidas', 'documentos'),
+        albumesTemporales: path.join(__dirname, '..', 'subidas', 'albumes_temporales'),
+        miniaturas: path.join(__dirname, '..', 'subidas', 'miniaturas'),
         baseDeDatos: path.join(__dirname, '..', 'base_de_datos', 'escuela.sqlite')
     },
 

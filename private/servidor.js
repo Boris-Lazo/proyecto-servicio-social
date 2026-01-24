@@ -28,24 +28,33 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
         // Servir archivos estáticos desde la carpeta public
         app.use(express.static(path.join(__dirname, '..', 'public')));
 
-        // Servir fotos de álbumes y documentos
-        app.use('/api/uploads', express.static(configuracionApp.rutas.albumes));
-        app.use('/api/docs/file', express.static(configuracionApp.rutas.documentos));
+        // Servir fotos de álbumes y documentos (rutas en español para la API)
+        app.use('/api/albumes/fotos', express.static(configuracionApp.rutas.albumes));
+        app.use('/api/documentos/archivo', express.static(configuracionApp.rutas.documentos));
+        app.use('/api/documentos/miniatura', express.static(configuracionApp.rutas.miniaturas));
 
         // Montar todas las rutas
         app.use(rutas);
 
+        // SPA Fallback: redirigir rutas no encontradas a index.html (excepto /api)
+        app.use((peticion, respuesta, siguiente) => {
+            if (peticion.path.startsWith('/api')) {
+                return siguiente();
+            }
+            respuesta.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+        });
+
         // Middleware para capturar errores de multer
-        app.use((err, req, res, next) => {
+        app.use((err, peticion, respuesta, siguiente) => {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
-                    return res.status(400).json({ error: 'Archivo demasiado grande' });
+                    return respuesta.status(400).json({ error: 'Archivo demasiado grande' });
                 }
-                return res.status(400).json({ error: `Error al subir archivo: ${err.message}` });
+                return respuesta.status(400).json({ error: `Error al subir archivo: ${err.message}` });
             } else if (err) {
-                return res.status(400).json({ error: err.message });
+                return respuesta.status(400).json({ error: err.message });
             }
-            next();
+            siguiente();
         });
 
         // Middleware global de manejo de errores
