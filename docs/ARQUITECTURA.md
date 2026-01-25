@@ -8,13 +8,13 @@ Este documento describe detalladamente la estructura técnica, los patrones de d
 
 ```mermaid
 graph TD
-    subgraph Cliente [Frontend (Navegador)]
-        HTML[Páginas HTML]
-        JS[Lógica JS (Frontend)]
-        API_Client[cliente-api.js (AJAX/Fetch)]
+    subgraph Cliente [Frontend (Vue.js 3)]
+        Vue[Componentes .vue]
+        Router[Vue Router]
+        API_Client[clienteApi.js (Fetch/XHR)]
 
-        HTML --> JS
-        JS --> API_Client
+        Vue --> Router
+        Router --> API_Client
     end
 
     subgraph Servidor [Backend (Node.js/Express)]
@@ -89,15 +89,19 @@ Para evitar el acoplamiento fuerte (que una clase dependa directamente de la cre
 
 ---
 
-## 🌐 Frontend y Comunicación AJAX
+## 🌐 Frontend (Vue.js 3 + Vite)
 
-El frontend es una Single Page Application (SPA) minimalista que se comunica con el servidor de forma asíncrona.
+El frontend ha sido migrado de Vanilla JS a **Vue.js 3**, utilizando una arquitectura de componentes reactivos y **Vite** como herramienta de construcción.
 
-### Cliente de API (`public/js/servicios/cliente-api.js`)
-El sistema utiliza una abstracción centralizada para todas las llamadas a la API. Esto es lo que comúnmente se conoce como **AJAX** (Asynchronous JavaScript And XML, aunque hoy usemos JSON).
+### Estructura de la SPA
+*   **Vistas (`src/vistas/`):** Representan las páginas completas (Inicio, Eventos, Admin).
+*   **Componentes (`src/componentes/`):** Partes reutilizables de la UI (Barra de Navegación, Pie de Página, Visor de Imágenes).
+*   **Enrutador (`src/router/`):** Gestiona la navegación del lado del cliente sin recargar la página.
 
-1.  **Fetch API:** Se utiliza para el 90% de las comunicaciones. Es una API moderna de JavaScript que permite realizar peticiones de forma limpia mediante Promesas (`async/await`). Maneja automáticamente el envío de Tokens JWT en los encabezados de autorización.
-2.  **XMLHttpRequest (XHR):** El proyecto mantiene el uso de este objeto clásico de AJAX específicamente para la subida de archivos pesados. La razón es pedagógica y técnica: XHR permite escuchar el evento `progress` de la subida, lo cual es vital para mostrar barras de progreso reales al usuario mientras sube álbumes de fotos o documentos PDF.
+### Comunicación API (`src/api/clienteApi.js`)
+Se mantiene el uso de **AJAX** para la comunicación con el backend:
+1.  **Fetch API:** Utilizado para operaciones estándar (GET, POST, DELETE).
+2.  **XMLHttpRequest (XHR):** Utilizado exclusivamente para la subida de archivos con seguimiento de progreso, integrado dentro de la lógica reactiva de los componentes de Vue.
 
 ---
 

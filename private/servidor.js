@@ -25,7 +25,8 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
         app.use(cors(opcionesCors));
         app.use(express.json());
 
-        // Servir archivos estáticos desde la carpeta public
+        // Servir archivos estáticos desde la carpeta dist (Vue) o public (fallback)
+        app.use(express.static(path.join(__dirname, '..', 'dist')));
         app.use(express.static(path.join(__dirname, '..', 'public')));
 
         // Servir fotos de álbumes y documentos
@@ -50,6 +51,16 @@ const manejadorErrores = require('./intermediarios/manejadorErrores');
 
         // Middleware global de manejo de errores
         app.use(manejadorErrores);
+
+        // SPA Fallback: redirigir cualquier ruta no encontrada a index.html (solo para GET)
+        app.get(/^\/(?!api).*/, (peticion, respuesta) => {
+            respuesta.sendFile(path.join(__dirname, '..', 'dist', 'index.html'), (err) => {
+                if (err) {
+                    // Si no existe dist (dev mode), intentar public
+                    respuesta.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+                }
+            });
+        });
 
         // Arrancar servidor
         const PUERTO = configuracionApp.puerto;

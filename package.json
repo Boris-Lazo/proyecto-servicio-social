@@ -3,12 +3,21 @@
   "version": "1.0.0",
   "description": "Portal público y CMS para el Centro Escolar",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "npx playwright test",
     "start": "cd private && npm start",
     "instalar-todo": "npm install && cd private && npm install"
   },
   "devDependencies": {
     "@playwright/browser-chromium": "^1.57.0",
-    "@playwright/test": "^1.57.0"
+    "@playwright/test": "^1.57.0",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "vue": "^3.5.27",
+    "vue-router": "^4.6.4"
   }
 }

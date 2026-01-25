@@ -43,7 +43,7 @@ El sistema permite a la escuela mantener a los padres y alumnos informados sobre
 ## 🏗 Arquitectura del Sistema
 El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada. El backend utiliza una **Arquitectura de Capas** con Inyección de Dependencias:
 
-*   **Cliente (Frontend):** Interfaz construida con HTML5, CSS3 y Vanilla JavaScript.
+*   **Cliente (Frontend):** Single Page Application (SPA) moderna construida con **Vue.js 3** y **Vite**.
 *   **Servidor (Backend):** Aplicación **Node.js/Express** estructurada en:
     *   **Controladores:** Gestión de peticiones y respuestas HTTP.
     *   **Servicios:** Orquestación de la lógica de negocio.
@@ -62,9 +62,10 @@ El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada. El backend 
 *   **Inyección de Dependencias:** Implementación nativa por constructor.
 
 ### Frontend (Cliente)
-*   **Lenguajes:** HTML5, CSS3, JavaScript (ES6+)
-*   **Comunicación:** AJAX (Fetch API y XMLHttpRequest)
-*   **Estilo:** CSS puro sin frameworks externos para máximo rendimiento.
+*   **Framework:** Vue.js 3 (Composition API)
+*   **Tooling:** Vite (Compilación ultra rápida)
+*   **Enrutamiento:** Vue Router (Navegación sin recarga)
+*   **Comunicación:** AJAX (Fetch API encapsulada en `clienteApi.js`)
 
 ---
 
@@ -73,22 +74,21 @@ El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada. El backend 
 ```text
 proyecto-escuela/
 ├── docs/                 # Documentación técnica detallada
-├── private/              # BACKEND
-│   ├── base_de_datos/    # Inicialización y archivo SQLite
-│   ├── configuracion/    # Configuración de App, Auth y Multer
-│   ├── controladores/    # Capa de Presentación
-│   ├── errores/          # Gestión de excepciones personalizadas
-│   ├── intermediarios/   # Middlewares (Auth, Errores, Validación)
-│   ├── repositorios/     # Capa de Acceso a Datos
-│   ├── rutas/            # Endpoints de la API REST
-│   ├── servicios/        # Capa de Lógica de Negocio
-│   ├── contenedor.js     # Composición del sistema (DI)
-│   └── servidor.js       # Punto de entrada
-└── public/               # FRONTEND
-    ├── js/
-    │   ├── servicios/    # cliente-api.js (Abstracción AJAX)
-    │   └── [vistas].js   # Lógica específica de cada página
-    └── [vistas].html     # Plantillas HTML
+├── private/              # BACKEND (Express + SQLite)
+│   ├── ...
+│   └── servidor.js       # Punto de entrada API
+├── src/                  # FRONTEND (Vue.js 3)
+│   ├── api/              # Cliente de API centralizado
+│   ├── assets/           # Estilos CSS y recursos estáticos
+│   ├── componentes/      # Componentes Vue reutilizables
+│   ├── router/           # Configuración de Vue Router
+│   ├── utilidades/       # Funciones de apoyo (Sanitización XSS)
+│   ├── vistas/           # Páginas completas (Home, Eventos, Admin, etc.)
+│   ├── App.vue           # Componente raíz
+│   └── main.js           # Inicialización de Vue
+├── public/               # Archivos estáticos heredados y assets públicos
+├── index.html            # Punto de entrada de Vite
+└── vite.config.js        # Configuración de Vite
 ```
 
 ---
@@ -126,11 +126,12 @@ Aunque la lógica del sistema está en español, la base de datos utiliza identi
 ## 🔌 Comunicación API y AJAX
 La interacción entre el frontend y el backend se realiza mediante una **API REST** que intercambia datos en formato **JSON**.
 
-### El Cliente de API (`cliente-api.js`)
-Para facilitar el aprendizaje, el proyecto utiliza un objeto centralizado `window.api` que encapsula las llamadas al servidor.
+### El Cliente de API (`clienteApi.js`)
+Para facilitar el aprendizaje, el proyecto utiliza un objeto centralizado que encapsula las llamadas al servidor.
 
-1.  **Fetch API (AJAX Moderno):** Se usa para la mayoría de las operaciones (obtener datos, enviar formularios, eliminar). Es una forma moderna y basada en Promesas de realizar peticiones asíncronas.
-2.  **XMLHttpRequest (AJAX Clásico):** Se utiliza específicamente en la función `subir()` para permitir el seguimiento del progreso de la subida de archivos pesados (imágenes y PDFs). Esto permite mostrar una barra de progreso al usuario en tiempo real.
+1.  **Reactividad:** Vue.js gestiona automáticamente la actualización de la interfaz cuando los datos cambian.
+2.  **Fetch API (AJAX Moderno):** Se usa para la mayoría de las operaciones.
+3.  **XMLHttpRequest (AJAX Clásico):** Se mantiene para la función `subir()` debido a su capacidad nativa de rastrear el progreso de subida.
 
 ### Principales Endpoints
 *   `POST /api/entrar`: Inicio de sesión.
