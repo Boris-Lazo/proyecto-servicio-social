@@ -1,64 +1,70 @@
 # 🏫 Proyecto Escuela
 
-![Node.js Version](https://img.shields.io/badge/Node.js-14%2B-green)
+![Node.js Version](https://img.shields.io/badge/Node.js-20%2B-green)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/Status-Active-success)
 
 Bienvenido a la documentación técnica del **Proyecto Escuela**. Esta aplicación web integral sirve como portal público para la comunidad educativa y como sistema de gestión de contenidos (CMS) para la administración de la institución.
 
-El proyecto ha sido recientemente refactorizado siguiendo principios **SOLID** y una arquitectura de capas, y todo el código ha sido traducido íntegramente al **español**.
+El proyecto ha sido recientemente refactorizado siguiendo principios **SOLID** y una arquitectura de capas, y todo el código ha sido traducido íntegramente al **español** para facilitar su mantenimiento y comprensión por el equipo local.
 
 ---
 
 ## 📋 Tabla de Contenidos
 1. [Visión General](#-visión-general)
-2. [Capturas de Pantalla](#-capturas-de-pantalla)
-3. [Arquitectura del Sistema](#-arquitectura-del-sistema)
-4. [Stack Tecnológico](#-stack-tecnológico)
-5. [Estructura de Directorios](#-estructura-de-directorios)
-6. [Esquema de Base de Datos](#-esquema-de-base-de-datos)
-7. [Documentación de la API](#-documentación-de-la-api)
-8. [Instalación y Configuración](#-instalación-y-configuración)
-9. [Seguridad](#-seguridad)
-10. [Contribución](#-contribución)
-11. [Autores y Licencia](#-autores-y-licencia)
+2. [Arquitectura del Sistema](#-arquitectura-del-sistema)
+3. [Stack Tecnológico](#-stack-tecnológico)
+4. [Estructura de Directorios](#-estructura-de-directorios)
+5. [Esquema de Base de Datos](#-esquema-de-base-de-datos)
+6. [Comunicación API y AJAX](#-comunicación-api-y-ajax)
+7. [Instalación y Configuración](#-instalación-y-configuración)
+8. [Seguridad](#-seguridad)
+9. [Autores y Licencia](#-autores-y-licencia)
+
+---
+
+## 📸 Capturas de Pantalla
+Para asegurar la calidad visual y la correcta traducción, se han generado capturas de las vistas principales:
+
+| Inicio | Login | Documentos |
+| :---: | :---: | :---: |
+| ![Inicio](docs/imagenes/verificacion_inicio.png) | ![Login](docs/imagenes/verificacion_login.png) | ![Documentos](docs/imagenes/verificacion_documentos.png) |
 
 ---
 
 ## 🔭 Visión General
 El sistema permite a la escuela mantener a los padres y alumnos informados sobre eventos y circulares, mientras ofrece a la dirección herramientas sencillas para actualizar este contenido sin necesidad de tocar código.
 
-*   **Público:** Puede ver galerías de fotos de eventos recientes y descargar documentos PDF (circulares, avisos).
-*   **Administrativo:** Permite subir álbumes de fotos masivos, gestionar documentos PDF y administrar la seguridad del sitio.
+*   **Público:** Visualización de galerías de fotos de eventos y descarga de documentos PDF (circulares, avisos).
+*   **Administrativo:** Panel protegido para la subida masiva de fotos, gestión de documentos y administración de seguridad.
 
 ---
 
 ## 🏗 Arquitectura del Sistema
-El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada. El backend ha sido rediseñado bajo una **Arquitectura de Capas** y principios **SOLID**:
+El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada. El backend utiliza una **Arquitectura de Capas** con Inyección de Dependencias:
 
-*   **Cliente (Frontend):** Archivos estáticos (`HTML/CSS/JS`) alojados en `public/`. Utiliza un cliente de API centralizado (`cliente-api.js`).
-*   **Servidor (Backend):** Aplicación **Node.js/Express** en `private/`.
-    *   **Controladores:** Manejan la entrada/salida HTTP.
-    *   **Servicios:** Contienen la lógica de negocio.
-    *   **Repositorios:** Gestionan la persistencia en la base de datos.
-    *   **Contenedor de Dependencias:** Gestiona la inyección de dependencias (`contenedor.js`).
+*   **Cliente (Frontend):** Interfaz construida con HTML5, CSS3 y Vanilla JavaScript.
+*   **Servidor (Backend):** Aplicación **Node.js/Express** estructurada en:
+    *   **Controladores:** Gestión de peticiones y respuestas HTTP.
+    *   **Servicios:** Orquestación de la lógica de negocio.
+    *   **Repositorios:** Abstracción del acceso a datos (SQLite).
+    *   **Contenedor de Dependencias:** Gestión centralizada de instancias (`contenedor.js`).
 
 ---
 
 ## 💻 Stack Tecnológico
 
 ### Backend (Servidor)
-*   **Runtime:** Node.js
-*   **Framework:** Express.js (v5.x)
-*   **Base de Datos:** SQLite3
-*   **Autenticación:** JWT (JSON Web Tokens) + Bcryptjs
-*   **Inyección de Dependencias:** Implementación nativa mediante constructor.
-*   **Calidad:** ESLint, Prettier, Jest (Testing)
+*   **Runtime:** Node.js (v20+)
+*   **Framework:** Express.js
+*   **Base de Datos:** SQLite3 (Persistencia local simple)
+*   **Autenticación:** JWT (JSON Web Tokens) y Bcryptjs para hashing de claves.
+*   **Inyección de Dependencias:** Implementación nativa por constructor.
 
 ### Frontend (Cliente)
-*   **Lenguajes:** HTML5 Semántico, CSS3, JavaScript (ES6+)
-*   **Comunicación:** Fetch API (encapsulada en `cliente-api.js`)
-*   **Seguridad:** Sanitización XSS manual.
+*   **Lenguajes:** HTML5, CSS3, JavaScript (ES6+)
+*   **Comunicación:** AJAX (Fetch API y XMLHttpRequest)
+*   **Estilo:** CSS puro sin frameworks externos para máximo rendimiento.
 
 ---
 
@@ -66,73 +72,84 @@ El proyecto sigue una arquitectura **Cliente-Servidor** desacoplada. El backend 
 
 ```text
 proyecto-escuela/
-├── .env                  # Variables de entorno
-├── private/              # BACKEND (Lógica del servidor)
-│   ├── base_de_datos/    # SQLite e inicialización
-│   ├── configuracion/    # Configuración de App, JWT, Multer, etc.
-│   ├── controladores/    # Capa de Presentación (HTTP)
-│   ├── errores/          # Clases de error personalizadas
+├── docs/                 # Documentación técnica detallada
+├── private/              # BACKEND
+│   ├── base_de_datos/    # Inicialización y archivo SQLite
+│   ├── configuracion/    # Configuración de App, Auth y Multer
+│   ├── controladores/    # Capa de Presentación
+│   ├── errores/          # Gestión de excepciones personalizadas
 │   ├── intermediarios/   # Middlewares (Auth, Errores, Validación)
 │   ├── repositorios/     # Capa de Acceso a Datos
-│   ├── rutas/            # Definición de Endpoints de la API
+│   ├── rutas/            # Endpoints de la API REST
 │   ├── servicios/        # Capa de Lógica de Negocio
-│   ├── contenedor.js     # Composición e Inyección de Dependencias
-│   ├── servidor.js       # Punto de entrada de la aplicación
-│   └── package.json      # Dependencias y scripts del backend
-└── public/               # FRONTEND (Interfaz de Usuario)
+│   ├── contenedor.js     # Composición del sistema (DI)
+│   └── servidor.js       # Punto de entrada
+└── public/               # FRONTEND
     ├── js/
-    │   ├── servicios/    # cliente-api.js
-    │   └── [lógica]      # admin.js, login.js, etc.
-    └── [vistas]          # index.html, admin.html, etc.
+    │   ├── servicios/    # cliente-api.js (Abstracción AJAX)
+    │   └── [vistas].js   # Lógica específica de cada página
+    └── [vistas].html     # Plantillas HTML
 ```
 
 ---
 
 ## 🗄 Esquema de Base de Datos
-El sistema utiliza **SQLite**. Las tablas se generan automáticamente en `private/base_de_datos/init.js`.
+Aunque la lógica del sistema está en español, la base de datos utiliza identificadores técnicos en inglés por convención de desarrollo inicial.
 
-### 1. `users` (Usuarios Administrativos)
-| Columna | Tipo | Descripción |
-| :--- | :--- | :--- |
-| `user` | TEXT UNIQUE | Correo electrónico del usuario |
-| `hash` | TEXT | Contraseña encriptada |
+### 1. `users` (Administradores)
+*   `id`: Identificador único (Auto-incremental).
+*   `user`: Correo electrónico/Nombre de usuario.
+*   `hash`: Contraseña encriptada.
+*   `created_at`: Fecha de creación.
 
-### 2. `albums` (Galerías de Fotos)
-| Columna | Tipo | Descripción |
-| :--- | :--- | :--- |
-| `id` | TEXT PK | Slug generado |
-| `fotos` | TEXT | Array JSON con nombres de archivo |
+### 2. `albums` (Galerías)
+*   `id`: Identificador único (Slug).
+*   `titulo`: Título del álbum.
+*   `fecha`: Fecha del evento.
+*   `descripcion`: Breve reseña.
+*   `fotos`: Lista de archivos (Formato JSON).
+*   `uploaded_at`: Fecha de subida.
+
+### 3. `docs` (Circulares y Documentos)
+*   `id`: Identificador único.
+*   `titulo`: Nombre descriptivo del PDF.
+*   `mes`: Mes correspondiente para filtrado.
+*   `filename`: Nombre del archivo en el sistema.
+
+### 4. `password_resets` (Recuperación)
+*   `user_email`: Correo del usuario.
+*   `token`: Token único temporal.
+*   `expires_at`: Timestamp de expiración.
 
 ---
 
-## 🔌 Documentación de la API
-Todas las respuestas de la API son en formato **JSON**.
+## 🔌 Comunicación API y AJAX
+La interacción entre el frontend y el backend se realiza mediante una **API REST** que intercambia datos en formato **JSON**.
 
-### Autenticación
-*   `POST /api/login`: Iniciar sesión. Cuerpo: `{usuario, contrasena}`.
-*   `POST /api/recover`: Solicitar código de recuperación. Cuerpo: `{correo}`.
-*   `POST /api/recover/change`: Cambiar contraseña con código. Cuerpo: `{tokenTemporal, nuevaClave}`.
+### El Cliente de API (`cliente-api.js`)
+Para facilitar el aprendizaje, el proyecto utiliza un objeto centralizado `window.api` que encapsula las llamadas al servidor.
 
-### Gestión
-*   `GET /api/albums`: Listar álbumes.
-*   `POST /api/albums` 🔒: Crear álbum (Multipart).
-*   `GET /api/docs`: Listar documentos.
-*   `POST /api/docs` 🔒: Subir PDF (Multipart).
+1.  **Fetch API (AJAX Moderno):** Se usa para la mayoría de las operaciones (obtener datos, enviar formularios, eliminar). Es una forma moderna y basada en Promesas de realizar peticiones asíncronas.
+2.  **XMLHttpRequest (AJAX Clásico):** Se utiliza específicamente en la función `subir()` para permitir el seguimiento del progreso de la subida de archivos pesados (imágenes y PDFs). Esto permite mostrar una barra de progreso al usuario en tiempo real.
 
-*(🔒 requiere Header `Authorization: Bearer <TOKEN>`)*
+### Principales Endpoints
+*   `POST /api/entrar`: Inicio de sesión.
+*   `GET /api/albumes`: Listado de galerías.
+*   `POST /api/albumes`: Creación de álbum (Requiere Token).
+*   `GET /api/documentos`: Listado de PDFs.
+*   `DELETE /api/documentos/:id`: Eliminación (Requiere Token).
 
 ---
 
 ## ⚙️ Instalación y Configuración
+Para poner en marcha el proyecto localmente:
 
-```bash
-cd private
-npm install
-npm start
-```
-Ejecutar pruebas: `npm test`
+1.  Instalar dependencias: `npm run instalar-todo`
+2.  Configurar variables de entorno en el archivo `.env`.
+3.  Iniciar el servidor: `npm start`
+4.  Acceder a `http://localhost:4000`.
 
 ---
 
 ## ✍️ Autores y Licencia
-Distribuido bajo la licencia **MIT**.
+Este proyecto es de código abierto bajo la licencia **MIT**.

@@ -1,36 +1,56 @@
-# Manual de Control de Calidad (QA Manual)
+# 🧪 Manual de Control de Calidad (QA)
 
-Este documento sirve como guía para la validación manual del sistema antes de cualquier despliegue.
+Este manual detalla los procedimientos para validar que el **Proyecto Escuela** funciona correctamente desde el punto de vista del usuario final y del administrador.
 
-## 📋 Checklist de Verificación Manual
+---
 
-### 1. Autenticación y Seguridad
-- [ ] **Login Exitoso**: Ingresar con credenciales válidas redirige al Dashboard (`/admin.html`).
-- [ ] **Login Fallido**: Ingresar credenciales erróneas muestra mensaje de error claro.
-- [ ] **Protección de Rutas**: Intentar acceder a `/admin.html` sin loguearse debe redirigir a `/login.html`.
-- [ ] **Recuperación de Contraseña**:
-    - [ ] El correo se envía correctamente (ver logs o inbox simulado).
-    - [ ] El token funciona y permite cambiar la contraseña.
-    - [ ] Token expirado o inválido es rechazado.
+## 📋 Pruebas Manuales (Checklist)
 
-### 2. Panel Administrativo (Dashboard)
-- [ ] **Crear Álbum**: Subir título, fecha y fotos. Verificar que aparece en la lista.
-- [ ] **Eliminar Álbum**: Borrar un álbum y confirmar que desaparece del listado y de la vista pública.
-- [ ] **Subir Documento**: Cargar un PDF con mes y título. Verificar descarga.
-- [ ] **Eliminar Documento**: Borrar documento y confirmar eliminación.
+### 1. Seguridad y Acceso
+- [ ] **Login:** Verificar que al ingresar correo y clave válidos se redirige a `admin.html`.
+- [ ] **Logout:** Al presionar "Salir", se debe limpiar el `localStorage` y redirigir a `login.html`.
+- [ ] **Protección de Rutas:** Intentar acceder directamente a `admin.html` sin haber iniciado sesión. El sistema debe denegar el acceso (redirigir o mostrar error).
+- [ ] **Recuperación de Clave:** Solicitar recuperación, recibir el correo (simulado en logs o Ethereal), y cambiar la clave exitosamente.
 
-### 3. Vista Pública (Frontend)
-- [ ] **Responsive Design**:
-    - [ ] Verificar menú hamburguesa en móvil (< 768px).
-    - [ ] Verificar grid de álbumes en escritorio y móvil.
-- [ ] **Carga de Imágenes**: Las imágenes de fondo y de los álbumes cargan correctamente.
-- [ ] **Descarga de PDFs**: Los enlaces a documentos funcionan.
+### 2. Gestión de Contenido (CMS)
+- [ ] **Subida de Álbumes:**
+    - [ ] Seleccionar varias imágenes (JPG/PNG).
+    - [ ] Verificar que aparece la barra de progreso AJAX.
+    - [ ] Confirmar que el álbum aparece en la lista administrativa y en la página pública.
+- [ ] **Gestión de Documentos:**
+    - [ ] Subir un archivo PDF.
+    - [ ] Verificar que se puede descargar desde la sección de circulares.
+    - [ ] Eliminar un documento y confirmar que ya no es accesible.
 
-### 4. API & Backend
-- [ ] **Respuestas JSON**: Verificar que la API responda JSON válido en `/api/albums`.
-- [ ] **Manejo de Errores**: Enviar petición malformada (ej. sin token) y recibir 401/400.
+### 3. Experiencia de Usuario (UX)
+- [ ] **Visor de Imágenes (Lightbox):** Abrir un álbum en la parte pública, hacer clic en una foto y verificar que se abre el visor a pantalla completa.
+- [ ] **Diseño Responsivo:** Probar la web en una ventana estrecha (móvil). El menú debe convertirse en un botón "hamburguesa" y las cuadrículas de fotos deben ajustarse a una sola columna.
+- [ ] **Sanitización:** Intentar crear un álbum con un título que contenga etiquetas HTML (ej. `<script>alert('XSS')</script>`). Verificar que el sistema limpia el texto y no ejecuta el script.
 
-## 🚀 Comandos de Verificación Automática
-Antes de realizar pruebas manuales, ejecutar:
-1. `npm run lint` - Para verificar estilo de código.
-2. `npm test` - Para verificar lógica básica.
+---
+
+## 🤖 Pruebas Automatizadas
+
+El proyecto incluye suites de pruebas que deben ejecutarse antes de cada entrega importante.
+
+### Pruebas de Integración (Backend)
+Verifican la lógica de los servicios y la conexión con la base de datos.
+```bash
+cd private
+npm test
+```
+
+### Pruebas de Extremo a Extremo (E2E)
+Verifican el flujo completo en el navegador usando Playwright.
+```bash
+# Desde la raíz del proyecto
+npm test
+```
+
+---
+
+## 🛡️ Verificación de Calidad de Código
+Asegúrate de que el código cumple con los estándares antes de reportar una tarea como finalizada:
+1.  Ejecutar `npm run lint` en la carpeta `private`.
+2.  Asegurarse de que no hay "hardcoded secrets" (como contraseñas) en el código.
+3.  Verificar que todos los mensajes de error mostrados al usuario estén en español y sean claros.

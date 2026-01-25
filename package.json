@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npx playwright test",
     "start": "cd private && npm start",
-    "install-all": "npm install && cd private && npm install"
+    "instalar-todo": "npm install && cd private && npm install"
   },
   "devDependencies": {
     "@playwright/browser-chromium": "^1.57.0",

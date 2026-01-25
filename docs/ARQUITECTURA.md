@@ -1,34 +1,106 @@
-# Documentación de Arquitectura
+# 🏗 Arquitectura del Proyecto Escuela
 
-## 🏗 Introducción
-El sistema ha sido rediseñado para seguir una arquitectura limpia, basada en capas y orientada a los principios **SOLID**. El objetivo es facilitar el mantenimiento, la escalabilidad y la realización de pruebas automatizadas.
+Este documento describe detalladamente la estructura técnica, los patrones de diseño y la organización del **Proyecto Escuela**. El sistema ha sido diseñado bajo los principios **SOLID** y una **Arquitectura de Capas** para garantizar mantenibilidad, legibilidad y facilidad de pruebas.
 
-## 📐 Capas del Sistema
+---
+
+## 📐 Diagrama de Arquitectura
+
+```mermaid
+graph TD
+    subgraph Cliente [Frontend (Navegador)]
+        HTML[Páginas HTML]
+        JS[Lógica JS (Frontend)]
+        API_Client[cliente-api.js (AJAX/Fetch)]
+
+        HTML --> JS
+        JS --> API_Client
+    end
+
+    subgraph Servidor [Backend (Node.js/Express)]
+        Server[servidor.js]
+        Container[contenedor.js]
+
+        subgraph CapaPresentacion [Capa de Presentación (HTTP)]
+            Rutas[Rutas (Express)]
+            Controladores[Controladores]
+        end
+
+        subgraph CapaNegocio [Capa de Lógica de Negocio]
+            Servicios[Servicios]
+            ServiciosExt[Servicios Externos: Correo, Imagen, Archivos]
+        end
+
+        subgraph CapaDatos [Capa de Acceso a Datos]
+            Repositorios[Repositorios]
+        end
+
+        Server -- Inicializa --> Container
+        Server -- Usa --> Rutas
+        Container -- Inyecta Dependencias --> Controladores
+        Container -- Inyecta Dependencias --> Servicios
+        Container -- Inyecta Dependencias --> Repositorios
+
+        Rutas --> Controladores
+        Controladores --> Servicios
+        Servicios --> Repositorios
+        Servicios --> ServiciosExt
+    end
+
+    subgraph Persistencia [Almacenamiento]
+        DB[(SQLite3)]
+        FS[Sistema de Archivos /upload]
+    end
+
+    API_Client -- HTTP Fetch/XHR Req --> Rutas
+    Repositorios -- SQL Queries --> DB
+    ServiciosExt -- Write/Read --> FS
+```
+
+---
+
+## 📂 Capas del Sistema (Backend)
+
+El backend está organizado en tres capas principales que separan las responsabilidades de forma estricta:
 
 ### 1. Capa de Presentación (Controladores)
-Ubicada en `private/controladores/`.
--   Recibe las peticiones HTTP (req) y devuelve las respuestas (res).
--   No contiene lógica de negocio.
--   Delega el trabajo pesado a la capa de servicios.
+*   **Ubicación:** `private/controladores/`
+*   **Responsabilidad:** Manejar la entrada y salida HTTP. Recibe los objetos `peticion` (request) y `respuesta` (response) de Express.
+*   **Regla:** No debe contener lógica de negocio ni consultas directas a la base de datos. Su única misión es extraer datos de la petición, llamar al servicio correspondiente y devolver el resultado (o el error) al cliente.
 
 ### 2. Capa de Negocio (Servicios)
-Ubicada en `private/servicios/`.
--   Contiene las reglas de negocio de la aplicación.
--   Es independiente del transporte (HTTP) y de la base de datos específica.
--   Utiliza los repositorios para acceder a los datos.
+*   **Ubicación:** `private/servicios/`
+*   **Responsabilidad:** Es el "corazón" de la aplicación. Aquí residen las reglas de negocio, validaciones complejas y la orquestación de procesos.
+*   **Regla:** Es agnóstica al transporte. No sabe si la petición viene de HTTP, de una consola o de una prueba. Utiliza los Repositorios para obtener o guardar datos.
 
 ### 3. Capa de Datos (Repositorios)
-Ubicada en `private/repositorios/`.
--   Encapsula toda la interacción con SQLite.
--   Implementa una clase base `RepositorioBase` para consultas comunes.
--   Permite cambiar la base de datos en el futuro con un impacto mínimo en el resto del sistema.
+*   **Ubicación:** `private/repositorios/`
+*   **Responsabilidad:** Encapsular toda la interacción con la base de datos (SQLite).
+*   **Regla:** Solo debe encargarse de ejecutar consultas SQL y devolver objetos de datos simples. Implementa una clase `RepositorioBase` para reutilizar lógica común de consulta.
 
-## 💉 Inyección de Dependencias
-Se utiliza un enfoque de inyección por constructor gestionado centralizadamente en `private/contenedor.js` (Composition Root). Esto evita el acoplamiento fuerte entre clases y facilita el uso de "mocks" durante las pruebas.
+---
+
+## 💉 Inyección de Dependencias (DI)
+
+Para evitar el acoplamiento fuerte (que una clase dependa directamente de la creación de otra), el proyecto utiliza un **Contenedor de Dependencias** (`private/contenedor.js`).
+
+*   **Composition Root:** Al iniciar la aplicación, el contenedor instancia todos los Repositorios, luego los Servicios (inyectándoles los Repositorios) y finalmente los Controladores (inyectándoles los Servicios).
+*   **Beneficio:** Esto permite cambiar un componente por otro fácilmente o usar "Mocks" durante las pruebas unitarias sin modificar el código fuente de las clases.
+
+---
+
+## 🌐 Frontend y Comunicación AJAX
+
+El frontend es una Single Page Application (SPA) minimalista que se comunica con el servidor de forma asíncrona.
+
+### Cliente de API (`public/js/servicios/cliente-api.js`)
+El sistema utiliza una abstracción centralizada para todas las llamadas a la API. Esto es lo que comúnmente se conoce como **AJAX** (Asynchronous JavaScript And XML, aunque hoy usemos JSON).
+
+1.  **Fetch API:** Se utiliza para el 90% de las comunicaciones. Es una API moderna de JavaScript que permite realizar peticiones de forma limpia mediante Promesas (`async/await`). Maneja automáticamente el envío de Tokens JWT en los encabezados de autorización.
+2.  **XMLHttpRequest (XHR):** El proyecto mantiene el uso de este objeto clásico de AJAX específicamente para la subida de archivos pesados. La razón es pedagógica y técnica: XHR permite escuchar el evento `progress` de la subida, lo cual es vital para mostrar barras de progreso reales al usuario mientras sube álbumes de fotos o documentos PDF.
+
+---
 
 ## 🔐 Seguridad y Errores
--   **Middlewares**: Ubicados en `private/intermediarios/`, gestionan la autenticación JWT, limitación de peticiones (Rate Limit) y validación de esquemas con Zod.
--   **Errores**: Se utiliza una jerarquía de errores en `private/errores/` para manejar fallos de forma semántica (ej. `ErrorNoEncontrado`, `ErrorValidacion`).
-
-## 🌐 Frontend
-El frontend se mantiene simple y ligero (Vanilla JS), pero ahora utiliza un cliente de API centralizado (`public/js/servicios/cliente-api.js`) que encapsula la lógica de autenticación y manejo de errores para todas las vistas.
+*   **JWT (JSON Web Tokens):** Se utiliza para mantener el estado de la sesión de forma segura y sin estado en el servidor. El token se guarda en el `localStorage` del navegador.
+*   **Manejo Centralizado de Errores:** Existe un intermediario (middleware) en `private/intermediarios/manejadorErrores.js` que captura cualquier fallo en la cadena de ejecución y devuelve una respuesta JSON coherente al cliente, evitando fugas de información sensible en los logs de error del navegador.

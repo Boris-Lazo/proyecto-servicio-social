@@ -1,30 +1,41 @@
-# Estándares de Calidad y Codificación
+# 💎 Estándares de Calidad y Codificación
 
-## 1. Introducción
-Este documento define los estándares técnicos para mantener la calidad del código en el **Proyecto Escuela**, enfocándose en la arquitectura SOLID y el uso del idioma español en el desarrollo.
+Este documento define los lineamientos técnicos que garantizan la sostenibilidad y robustez del **Proyecto Escuela**. Todos los colaboradores deben seguir estas reglas para mantener la coherencia del sistema.
 
-## 2. Arquitectura y Diseño
-El proyecto sigue una **Arquitectura de Capas** para garantizar el desacoplamiento y la testabilidad:
--   **Controladores**: Única capa que conoce el protocolo HTTP.
--   **Servicios**: Donde reside la lógica de negocio pura. No conocen HTTP ni la base de datos directamente.
--   **Repositorios**: Encargados únicamente de las consultas a la base de datos.
--   **Inyección de Dependencias**: Todas las dependencias deben inyectarse a través del constructor.
+---
 
-## 3. Idioma y Nomenclatura
-**Todo el nuevo código debe escribirse en español.**
--   **Variables y Funciones**: `camelCase` en español (ej. `obtenerUsuario`).
--   **Clases**: `PascalCase` en español (ej. `RepositorioAlbum`).
--   **Archivos**: `PascalCase` para clases y `kebab-case` para otros archivos (ej. `ControladorAuth.js`, `cliente-api.js`).
--   **Comentarios**: Siempre en español, explicando el *porqué* más que el *qué*.
+## 1. Principios de Arquitectura
+El código debe escribirse pensando en el largo plazo, siguiendo los principios **SOLID**:
+-   **Responsabilidad Única (SRP):** Cada clase (Controlador, Servicio, Repositorio) debe tener una sola razón para cambiar.
+-   **Inyección de Dependencias:** No instanciar clases dentro de otras. Pasar las dependencias por el constructor para facilitar el desacoplamiento.
+-   **Arquitectura de Capas:** Respetar estrictamente el flujo `Controlador -> Servicio -> Repositorio`.
 
-## 4. Herramientas de Calidad
--   **ESLint**: Configurado para detectar errores comunes.
--   **Prettier**: Asegura un formato consistente.
--   **Jest**: Marco de pruebas para unitarias e integración.
+## 2. Idioma y Nomenclatura
+El **español** es el idioma oficial del proyecto para toda la lógica de negocio y documentación técnica.
 
-## 5. Pruebas (Testing)
--   Cada nueva funcionalidad en la capa de **Servicio** o **Repositorio** debe tener su prueba correspondiente.
--   Los controladores se prueban idealmente mediante pruebas de integración.
+-   **Variables y Funciones:** `camelCase` en español (ej. `obtenerListaDeAlbumes`).
+-   **Clases:** `PascalCase` en español (ej. `ServicioAutenticacion`).
+-   **Archivos:** `PascalCase` para clases y `kebab-case` para otros (ej. `ControladorDocumento.js`, `manejador-errores.js`).
+-   **Base de Datos:** Se mantiene el uso de identificadores en inglés para compatibilidad técnica (`users`, `albums`), pero se documentan en español.
 
-## 6. Git y Commits
--   Mensajes en español y tiempo imperativo: "Refactorizar capa de datos", "Corregir bug en login".
+## 3. Estilo de Código (Linting & Formatting)
+El proyecto utiliza herramientas automatizadas para garantizar que el código se vea igual, sin importar quién lo escriba:
+-   **ESLint:** Para detectar errores potenciales y malas prácticas.
+-   **Prettier:** Para formatear el código automáticamente (espaciado, comillas, punto y coma).
+
+> Antes de subir cualquier cambio, ejecuta: `cd private && npm run format && npm run lint`
+
+## 4. Gestión de Errores
+-   Nunca uses `try/catch` vacíos.
+-   Lanza errores semánticos definidos en `private/errores/` (ej. `ErrorNoEncontrado`, `ErrorValidacion`).
+-   Deja que el `manejadorErrores.js` centralizado se encargue de transformar esos errores en respuestas HTTP adecuadas.
+
+## 5. Pruebas Automatizadas (Testing)
+La calidad se demuestra con pruebas. El proyecto cuenta con dos niveles de testing:
+1.  **Unitarias (Backend):** Usando **Jest**. Enfocadas en la lógica de los servicios y repositorios.
+2.  **E2E (Frontend/Sistema):** Usando **Playwright**. Pruebas de "caja negra" que simulan la navegación real del usuario.
+
+## 6. Seguridad
+-   **Sanitización:** Toda entrada del usuario debe ser validada (usando `Zod` en el backend) y saneada antes de mostrarse en el HTML para evitar ataques XSS (usando `sanearHTML` en el frontend).
+-   **Secretos:** Nunca subir el archivo `.env` al repositorio. Usa el archivo `.env.example` como guía.
+-   **Contraseñas:** Siempre encriptadas con `Bcryptjs` (mínimo 10 rondas de sal).
