@@ -142,13 +142,25 @@ Para facilitar el aprendizaje, el proyecto utiliza un objeto centralizado que en
 
 ---
 
-## ⚙️ Instalación y Configuración
-Para poner en marcha el proyecto localmente:
+## 🚀 Inicio Rápido (Automatizado)
+Si es la primera vez que ejecutas el proyecto, puedes usar el script de automatización que configura todo por ti:
 
-1.  Instalar dependencias: `npm run instalar-todo`
-2.  Configurar variables de entorno en el archivo `.env`.
-3.  Iniciar el servidor: `npm start`
-4.  Acceder a `http://localhost:4000`.
+```bash
+chmod +x iniciar-aplicacion.sh
+./iniciar-aplicacion.sh
+```
+Este script instalará las dependencias, creará un archivo `.env` base, compilará el frontend y arrancará el servidor.
+
+---
+
+## ⚙️ Instalación Manual
+Si prefieres configurar cada paso manualmente:
+
+1.  **Dependencias:** `npm run instalar-todo`
+2.  **Configuración:** Crear archivo `.env` basándose en el manual de despliegue.
+3.  **Compilación Frontend:** `npm run build`
+4.  **Arranque:** `npm start`
+5.  **Acceso:** `http://localhost:4000`
 
 ---
 
