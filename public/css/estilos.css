@@ -77,8 +77,8 @@ body {
 /* Override para container-limitado dentro del navBar */
 .navBar .container-limitado {
     max-width: none;
-    margin: 0;
-    width: 100%;
+    margin: 0 1.5rem;
+    width: auto;
 }
 
 .navBar.scrolled {
