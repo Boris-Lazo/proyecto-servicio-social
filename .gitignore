@@ -30,4 +30,4 @@ yarn-error.log
 Thumbs.db
 
 # Base de datos
-/private/db/escuela.sqlite
+/private/base_de_datos/escuela.sqlite
