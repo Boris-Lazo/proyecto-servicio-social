@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Inicio from '@/vistas/Inicio.vue';
-import Eventos from '@/vistas/Eventos.vue';
-import Documentos from '@/vistas/Documentos.vue';
-import Login from '@/vistas/Login.vue';
-import Admin from '@/vistas/Admin.vue';
-import RecuperarClave from '@/vistas/RecuperarClave.vue';
+
+// Lazy loading para optimizar el tamaño del paquete inicial
+const Inicio = () => import('@/vistas/Inicio.vue');
+const Eventos = () => import('@/vistas/Eventos.vue');
+const Documentos = () => import('@/vistas/Documentos.vue');
+const Login = () => import('@/vistas/Login.vue');
+const Admin = () => import('@/vistas/Admin.vue');
+const RecuperarClave = () => import('@/vistas/RecuperarClave.vue');
 
 const routes = [
   { path: '/', component: Inicio },

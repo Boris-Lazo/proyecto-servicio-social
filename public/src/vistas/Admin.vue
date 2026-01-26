@@ -249,6 +249,9 @@ async function subirAlbum() {
     formAlbum.success = '✅ Álbum publicado correctamente';
     loadData();
     // reset form
+    formAlbum.titulo = ''; formAlbum.fecha = ''; formAlbum.descripcion = '';
+    formAlbum.fotos = []; formAlbum.fotosLabel = 'Haz clic para seleccionar';
+    formAlbum.previews = []; formAlbum.progreso = 0;
   } catch (e) { formAlbum.error = e.message; }
   finally { uploadingAlbum.value = false; }
 }
@@ -269,6 +272,9 @@ async function subirDoc() {
     await api.subir('/api/docs', fd, p => formDoc.progreso = p);
     formDoc.success = '✅ Documento subido';
     loadData();
+    // reset form
+    formDoc.titulo = ''; formDoc.mes = ''; formDoc.file = null;
+    formDoc.fileLabel = 'Haz clic para seleccionar'; formDoc.progreso = 0;
   } catch (e) { formDoc.error = e.message; }
   finally { uploadingDoc.value = false; }
 }

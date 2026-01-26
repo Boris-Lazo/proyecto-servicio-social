@@ -95,6 +95,14 @@ function next() {
   currentIndex.value = (currentIndex.value + 1) % props.album.fotos.length;
 }
 
+// Pre-carga de la siguiente imagen para una transición más fluida
+watch(currentIndex, (newIndex) => {
+  if (!props.album) return;
+  const nextIndex = (newIndex + 1) % props.album.fotos.length;
+  const img = new Image();
+  img.src = `/api/uploads/${props.album.id}/${props.album.fotos[nextIndex]}`;
+});
+
 function prev() {
   currentIndex.value = (currentIndex.value - 1 + props.album.fotos.length) % props.album.fotos.length;
 }
