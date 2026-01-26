@@ -1,6 +1,6 @@
 <template>
   <header class="escuela-header login-header">
-    <img class="vista" src="/img/fondo-index.jpeg" alt="Fondo login" loading="lazy">
+    <img class="vista" src="@/assets/img/fondo-index.jpeg" alt="Fondo login" loading="lazy">
 
     <main>
       <section class="login">

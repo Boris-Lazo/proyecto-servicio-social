@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="escuela-header">
-      <img class="vista" src="/img/fondo-index.jpeg" alt="Niños en el evento de la escuela" loading="lazy">
+      <img class="vista" src="@/assets/img/fondo-index.jpeg" alt="Niños en el evento de la escuela" loading="lazy">
 
       <section class="escuela-info">
         <p>BIENVENIDOS. <br>El Centro Escolar Cantón El Amatal es una institución educativa de El Salvador que se
