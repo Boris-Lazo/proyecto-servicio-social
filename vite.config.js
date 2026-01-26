@@ -3,14 +3,15 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
 export default defineConfig({
+  root: 'public',
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, 'public/src'),
     },
   },
   build: {
-    outDir: 'dist',
+    outDir: '../dist',
     emptyOutDir: true,
   },
   server: {
